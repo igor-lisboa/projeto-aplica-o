@@ -1,0 +1,1 @@
+FROM monetdb/monetdb:Oct2020-SP3

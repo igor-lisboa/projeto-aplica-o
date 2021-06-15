@@ -39,49 +39,24 @@ Neo4j
 
 # por padrao o monetdb vem com user e passoword definidos como monetdb
 
-# docker pull monetdb/monetdb-r-docker
-# docker run -d -P --name monetdb-r monetdb/monetdb-r-docker
+> docker run -v "$(pwd):/var/www" -d -P --name monetdb monetdb/monetdb:Oct2020-SP3
 
+> docker exec -it monetdb bash
 
-# dbeaver tem conector pro monetdb
-* veja porta do container do docker e crie conexao 
+> monetdb create dataflow_analyzer
+> monetdb release dataflow_analyzer
 
-rode para criar database e testar:
-
-monetdb create voc
-monetdb release voc
-
-shell> mclient -u monetdb -d voc
-password:<monetdb>
-sql>CREATE USER "voc" WITH PASSWORD 'voc' NAME 'VOC Explorer' SCHEMA "sys";
-sql>CREATE SCHEMA "voc" AUTHORIZATION "voc";
-sql>ALTER USER "voc" SET SCHEMA "voc";
-sql>SELECT 'hello world';
-sql>\q
-
-***
-
-monetdb create dataflow_analyzer
-monetdb release dataflow_analyzer
-
-
-shell> mclient -u monetdb -d dataflow_analyzer
+> mclient -u monetdb -d dataflow_analyzer
 password:<monetdb>
 
-CREATE USER "dataflow_analyzer" WITH PASSWORD 'dataflow_analyzer' NAME 'Dataflow Analyzer Explorer' SCHEMA "sys";
-CREATE SCHEMA "dataflow_analyzer" AUTHORIZATION "dataflow_analyzer";
-ALTER USER "dataflow_analyzer" SET SCHEMA "dataflow_analyzer";
-SELECT 'hello world';
+> CREATE USER "dataflow_analyzer" WITH PASSWORD 'dataflow_analyzer' NAME 'Dataflow Analyzer Explorer' SCHEMA "sys";
+> CREATE SCHEMA "dataflow_analyzer" AUTHORIZATION "dataflow_analyzer";
+> ALTER USER "dataflow_analyzer" SET SCHEMA "dataflow_analyzer";
+> CREATE SCHEMA "public" AUTHORIZATION "dataflow_analyzer";
+> ALTER USER "dataflow_analyzer" SET SCHEMA "public";
+> SELECT 'hello world';
 
-CREATE SCHEMA "public" AUTHORIZATION "dataflow_analyzer";
-ALTER USER "dataflow_analyzer" SET SCHEMA "public";
-SELECT 'hello world';
+> cd /var/www
 
-***
-
-docker run -v "$(pwd):/var/www" -d -P --name monetdb-r monetdb/monetdb-r-docker
-
-ir pra pasta /var/www
-
-mclient -u dataflow_analyzer -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
+> mclient -u dataflow_analyzer -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
 password:<dataflow_analyzer>
