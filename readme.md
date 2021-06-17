@@ -39,24 +39,18 @@ Neo4j
 
 # por padrao o monetdb vem com user e passoword definidos como monetdb
 
-> docker run -v "$(pwd):/var/www" -d -P --name monetdb monetdb/monetdb:Oct2020-SP3
+> docker compose up --build
 
-> docker exec -it monetdb bash
+> docker exec -it projecto_aplicacao_monetdb bash
 
-> monetdb create dataflow_analyzer
-> monetdb release dataflow_analyzer
+> monetdb create dataflow_analyzer && monetdb release dataflow_analyzer
 
 > mclient -u monetdb -d dataflow_analyzer
 password:<monetdb>
 
-> CREATE USER "dataflow_analyzer" WITH PASSWORD 'dataflow_analyzer' NAME 'Dataflow Analyzer Explorer' SCHEMA "sys";
-> CREATE SCHEMA "dataflow_analyzer" AUTHORIZATION "dataflow_analyzer";
-> ALTER USER "dataflow_analyzer" SET SCHEMA "dataflow_analyzer";
-> CREATE SCHEMA "public" AUTHORIZATION "dataflow_analyzer";
-> ALTER USER "dataflow_analyzer" SET SCHEMA "public";
-> SELECT 'hello world';
+> CREATE USER "dataflow_analyzer" WITH PASSWORD 'dataflow_analyzer' NAME 'Dataflow Analyzer Explorer' SCHEMA "sys";CREATE SCHEMA "dataflow_analyzer" AUTHORIZATION "dataflow_analyzer";ALTER USER "dataflow_analyzer" SET SCHEMA "dataflow_analyzer";CREATE SCHEMA "public" AUTHORIZATION "dataflow_analyzer";ALTER USER "dataflow_analyzer" SET SCHEMA "public";SELECT 'hello world';
 
-> cd /var/www
+> [CTRL + C]
 
-> mclient -u dataflow_analyzer -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
+> mclient -u dataflow_analyzer -e -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
 password:<dataflow_analyzer>
