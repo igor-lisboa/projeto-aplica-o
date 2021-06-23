@@ -54,3 +54,20 @@ password:<monetdb>
 
 > mclient -u dataflow_analyzer -e -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
 password:<dataflow_analyzer>
+
+
+
+
+docker compose up --build -d
+docker exec -it projecto_aplicacao_monetdb bash
+monetdbd create mydbfarm
+cd mydbfarm
+monetdbd get all ./
+monetdb create sciphy_dados
+monetdb release sciphy_dados
+cd ../
+mclient -u monetdb -d sciphy_dados
+password: monetdb
+CREATE SCHEMA "public" AUTHORIZATION "monetdb";
+ALTER USER "monetdb" SET SCHEMA "public";
+\<dados_sciphy.sql

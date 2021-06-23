@@ -4,4 +4,4 @@ services:
     container_name: projecto_aplicacao_monetdb
     build: .
     volumes:
-      - ./:/var/www
+      - ./data:/var/data
