@@ -37,37 +37,19 @@ Neo4j
 
 ***
 
-# por padrao o monetdb vem com user e passoword definidos como monetdb
+### por padrao o monetdb vem com user e passoword definidos como monetdb
 
-> docker compose up --build
-
-> docker exec -it projecto_aplicacao_monetdb bash
-
-> monetdb create dataflow_analyzer && monetdb release dataflow_analyzer
-
-> mclient -u monetdb -d dataflow_analyzer
-password:<monetdb>
-
-> CREATE USER "dataflow_analyzer" WITH PASSWORD 'dataflow_analyzer' NAME 'Dataflow Analyzer Explorer' SCHEMA "sys";CREATE SCHEMA "dataflow_analyzer" AUTHORIZATION "dataflow_analyzer";ALTER USER "dataflow_analyzer" SET SCHEMA "dataflow_analyzer";CREATE SCHEMA "public" AUTHORIZATION "dataflow_analyzer";ALTER USER "dataflow_analyzer" SET SCHEMA "public";SELECT 'hello world';
-
-> [CTRL + C]
-
-> mclient -u dataflow_analyzer -e -d dataflow_analyzer < ./dados_sciphy.sql > log.txt
-password:<dataflow_analyzer>
-
-
-
-
-docker compose up --build -d
-docker exec -it projecto_aplicacao_monetdb bash
-monetdbd create mydbfarm
-cd mydbfarm
-monetdbd get all ./
-monetdb create sciphy_dados
-monetdb release sciphy_dados
-cd ../
-mclient -u monetdb -d sciphy_dados
-password: monetdb
-CREATE SCHEMA "public" AUTHORIZATION "monetdb";
-ALTER USER "monetdb" SET SCHEMA "public";
-\<dados_sciphy.sql
+# Comandos
+* docker compose up --build -d
+* docker exec -it projecto_aplicacao_monetdb bash
+* monetdbd create mydbfarm
+* cd mydbfarm
+* monetdbd get all ./
+* monetdb create sciphy_dados
+* monetdb release sciphy_dados
+* cd ../
+* mclient -u monetdb -d sciphy_dados
+* password: monetdb
+* CREATE SCHEMA "public" AUTHORIZATION "monetdb";
+* ALTER USER "monetdb" SET SCHEMA "public";
+* \<dados_sciphy.sql
