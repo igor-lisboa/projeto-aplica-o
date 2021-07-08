@@ -35,7 +35,7 @@
 
 # Comandos
 * docker compose up --build -d
-* docker exec -it projecto_aplicacao_monetdb bash
+* docker exec -it projeto_aplicacao_monetdb bash
 * monetdbd create mydbfarm
 * cd mydbfarm
 * monetdbd get all ./
