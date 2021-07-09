@@ -6,7 +6,6 @@ services:
     restart: always
     volumes:
       - ./monetdb/data:/var/data
-    working_dir: /var/data
     ports:
       - 50000:50000
   mongodb:
@@ -24,12 +23,7 @@ services:
     container_name: projeto_aplicacao_neo4j
     restart: always
     ports:
-      - 7474:7474
       - 7687:7687
-    volumes:
-      - ./neo4j/plugins:/plugins
-      - ./neo4j/data:/data
-      - ./neo4j/import:/import
   postgresdb:
     image: postgres:13.3
     container_name: projeto_aplicacao_postgres
@@ -45,14 +39,7 @@ services:
     container_name: projeto_aplicacao_cassandra
     restart: always
     ports:
-      - 7199:7199
-      - 7000:7000
-      - 7001:7001
-      - 9160:9160
       - 9042:9042
-    volumes:
-        - ./cassandra/data:/var/lib/cassandra
-        - ./cassandra/config:/var/config
   redisdb:
     image: redis:6.2
     container_name: projeto_aplicacao_redis
