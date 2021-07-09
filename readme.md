@@ -40,12 +40,12 @@
 	* username: postgres
 	* password: postgres
 ## Tratar cassandra
-## Site Apache Cassandra
+### Site Apache Cassandra
 * https://cassandra.apache.org/quickstart/
-## Comandos para iniciar cassandra keyspace
+### Comandos para iniciar cassandra keyspace
 * docker exec -it projeto_aplicacao_cassandra bash
 * cqlsh
 * CREATE KEYSPACE IF NOT EXISTS tcc WITH replication = {'class' : 'SimpleStrategy', 'replication_factor' : 1};
-## SGBD
+### SGBD
 * Estou tentando usar o tableplus para fazer conexão com o banco cassandra...
 	* Mas enquanto não consigo... O tratmento se dá apenas por linha de comando usando o `cqlsh`
