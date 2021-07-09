@@ -33,10 +33,11 @@
 	* username: neo4j
 	* password: neo4j
 ## Tratar postgres
-### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco postgres...
 	* host: localhost
 	* database: tcc
 	* port: 5432
 	* username: postgres
 	* password: postgres
+## Tratar cassandra
+* CREATE KEYSPACE $CASSANDRA_KEYSPACE WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};

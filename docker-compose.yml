@@ -52,6 +52,7 @@ services:
       - 9042:9042
     volumes:
         - ./cassandra/data:/var/lib/cassandra
+        - ./cassandra/config:/var/config
   redisdb:
     image: redis:6.2
     container_name: projeto_aplicacao_redis
