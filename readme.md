@@ -4,6 +4,7 @@
 ## Iniciar containers
 * docker compose up --build -d
 ## Tratar monetdb
+### Restaurando databse a partir do dump
 * docker exec -it projeto_aplicacao_monetdb bash
 	* comando que entra no terminal dentro do container
 * monetdbd create mydbfarm
@@ -24,6 +25,13 @@
 ## Tratar mongodb
 * Tenha o compass instalado: https://www.mongodb.com/try/download/compass
 * connection string: mongodb://root:root_password@localhost:27017/tcc
+## Tratar neo4j
+* Estou usando o dbeaver para fazer conexão com o banco neo4j...
+	* jdbc url: jdbc:neo4j:bolt://localhost:7687/
+	* host: localhost
+	* port: 7687
+	* username: neo4j
+	* password: neo4j
 ## Tratar postgres
 ### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco postgres...

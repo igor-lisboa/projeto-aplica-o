@@ -1,2 +1,3 @@
-monetdb/data
-neo4j/data
+cassandra
+monetdb
+neo4j

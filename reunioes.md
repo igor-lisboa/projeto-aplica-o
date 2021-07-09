@@ -29,7 +29,7 @@
 
 ***
 
-### por padrao o monetdb vem com user e passoword definidos como monetdb
+* por padrao o monetdb vem com user e passoword definidos como monetdb
 
 # 06/07
 * https://github.com/igor-lisboa/projeto-aplicacao
