@@ -17,9 +17,26 @@ services:
       - MONGO_INITDB_DATABASE=tcc
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root_password
-    volumes:
-      - ./mongodb/data:/data/db
     ports:
       - 27017:27017
+  neo4jdb:
+    image: neo4j:4.1
+    container_name: projeto_aplicacao_neo4j
+    restart: always
+    ports:
+      - 7474:7474
+      - 7687:7687
     volumes:
-      - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./neo4j/plugins:/plugins
+      - ./neo4j/data:/data
+      - ./neo4j/import:/import
+  postgresdb:
+    image: postgres:13.3
+    container_name: projeto_aplicacao_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tcc
+    ports:
+      - 5432:5432

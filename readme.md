@@ -1,41 +1,11 @@
-# Framework/biblioteca p ajudar na proveniência de dados
+# Estudo sobre diferentes SGBDs para proveniência
 * Estruturar o dado e explorar ele em múltiplos bancos de dados, mapear padrões de consulta e verificar pontos fortes de cada um dos bancos de dados, para aconselhar qual é melhor para cada necessidade de consulta.
-
- ***
-
-* problema q começou a tratar agr
-* dado de proveniencia
-	* historico do experimento
-		* momento e oq foi observado
-	* muito experimento simulado no computador
-		* script q executa programas/parte de codigo
-			* pipelines
-* montar framework/biblioteca p ajudar na proveniencia de dados
-	* parametro de entrada/saida
-* Neo4j
-	* bd grafo
-* pegar banco relacional
-	* estruturar o dado e explorar ele em multiplos sistemas
-		* cassandraDB
-		* monnetDB
-* quais analises nas quais cada um dos bds é forte
-* quais sao os padroes de consulta ?
-* mapear padroes de consulta pra cada consulta em cada BD pra poder aconselhar um BD
-* qual banco performa melhor
-	* testar
-* olhar dataset
-	* quais tipos de dados temos la dentro?
-	* quais bancos explorar
-
-***
-
-### por padrao o monetdb vem com user e passoword definidos como monetdb
-
-***
-
-# Comandos
+# Comandos para Inicializar BDs
+## Iniciar containers
 * docker compose up --build -d
+## Tratar monetdb
 * docker exec -it projeto_aplicacao_monetdb bash
+	* comando que entra no terminal dentro do container
 * monetdbd create mydbfarm
 * cd mydbfarm
 * monetdbd get all ./
@@ -47,3 +17,18 @@
 * CREATE SCHEMA "public" AUTHORIZATION "monetdb";
 * ALTER USER "monetdb" SET SCHEMA "public";
 * \<dados_sciphy.sql
+### SGBD
+* Estou usando o dbeaver para fazer conexão com o banco monetdb...
+	* jdbc url: jdbc:monetdb://localhost:50000/sciphy_dados
+	* username e password: monetdb
+## Tratar mongodb
+* Tenha o compass instalado: https://www.mongodb.com/try/download/compass
+* connection string: mongodb://root:root_password@localhost:27017/tcc
+## Tratar postgres
+### SGBD
+* Estou usando o dbeaver para fazer conexão com o banco postgres...
+	* host: localhost
+	* database: tcc
+	* port: 5432
+	* username: postgres
+	* password: postgres
