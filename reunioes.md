@@ -89,7 +89,7 @@
 ## QUAIS QUEREMOS AVALIAR? (1A PARTE)
 *  mongo (documento)
 *  neo4j (GRAFO)
-*  redis?dynamoDB (chave/valor)
+*  redis?dynamoDB?cassandra (chave/valor)
 *  postgreSql(relacional)
 	* postgresSql (controle de concorrencia é melhor)
 
