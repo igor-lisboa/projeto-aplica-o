@@ -125,3 +125,9 @@
 
 * PRA INICIO PODE SER A CONSULTA Q VERIFICA
 	* QL ENTRADA RETORNOU TAL SAIDA?
+
+
+# 13/07/2021
+* Próximo Entregável:
+	* Estruturar dados nos outros bds sem ser o monetdb a partir da estrutura presente no dump
+* Criar grupo telegram para o TCC
