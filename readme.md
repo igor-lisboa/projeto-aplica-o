@@ -17,7 +17,7 @@
 * password: monetdb
 * CREATE SCHEMA "public" AUTHORIZATION "monetdb";
 * ALTER USER "monetdb" SET SCHEMA "public";
-* \<dados_sciphy.sql
+* \\<dados_sciphy.sql
 ### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco monetdb...
 	* jdbc url: jdbc:monetdb://localhost:50000/sciphy_dados
