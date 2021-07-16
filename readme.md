@@ -7,16 +7,9 @@
 ### Restaurando databse a partir do dump
 * docker exec -it projeto_aplicacao_monetdb bash
 	* comando que entra no terminal dentro do container
-* monetdbd create mydbfarm
-* cd mydbfarm
-* monetdbd get all ./
-* monetdb create sciphy_dados
-* monetdb release sciphy_dados
-* cd ../
+* monetdbd create mydbfarm && cd mydbfarm && monetdbd get all ./ && monetdb create sciphy_dados && monetdb release sciphy_dados && cd ../../../var/data
 * mclient -u monetdb -d sciphy_dados
-* password: monetdb
-* CREATE SCHEMA "public" AUTHORIZATION "monetdb";
-* ALTER USER "monetdb" SET SCHEMA "public";
+	* password: monetdb
 * \\<dados_sciphy.sql
 ### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco monetdb...
