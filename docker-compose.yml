@@ -34,12 +34,6 @@ services:
       - POSTGRES_DB=tcc
     ports:
       - 5432:5432
-  cassandradb:
-    image: cassandra:4.0
-    container_name: projeto_aplicacao_cassandra
-    restart: always
-    ports:
-      - 9042:9042
   redisdb:
     image: redis:6.2
     container_name: projeto_aplicacao_redis
