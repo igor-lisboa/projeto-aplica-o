@@ -150,8 +150,8 @@ CREATE TABLE "public"."task" (
 	"status"             VARCHAR(10),
 	"workspace"          VARCHAR(5000),
 	"computing_resource" VARCHAR(100),
-	"output_msg"         CHARACTER LARGE OBJECT,
-	"error_msg"          CHARACTER LARGE OBJECT,
+	"output_msg"         TEXT,
+	"error_msg"          TEXT,
 	CONSTRAINT "task_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."file_type" (
@@ -174,7 +174,7 @@ CREATE TABLE "public"."performance" (
 	"description" VARCHAR(200),
 	"starttime"   VARCHAR(30),
 	"endtime"     VARCHAR(30),
-	"invocation"  CHARACTER LARGE OBJECT,
+	"invocation"  TEXT,
 	CONSTRAINT "performance_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."dataflow_execution" (
@@ -349,7 +349,7 @@ CREATE TABLE "public"."ds_oprogramexecutemodule_raxml" (
 CREATE TABLE "public"."ds_itelemetry_raxml" (
 	"id"                            INTEGER       NOT NULL DEFAULT next value for "public"."itelemetry_raxml_id_seq",
 	"telemetrymodule_raxml_task_id" INTEGER,
-	"test"                          DOUBLE,
+	"test"                          DECIMAL,
 	CONSTRAINT "ds_itelemetry_raxml_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."ds_otelemetry_raxml" (
@@ -453,7 +453,7 @@ CREATE TABLE "public"."ds_oprogramexecutemodule_mrb" (
 CREATE TABLE "public"."ds_itelemetry_mrb" (
 	"id"                          INTEGER       NOT NULL DEFAULT next value for "public"."itelemetry_mrb_id_seq",
 	"telemetrymodule_mrb_task_id" INTEGER,
-	"test"                        DOUBLE,
+	"test"                        DECIMAL,
 	CONSTRAINT "ds_itelemetry_mrb_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."ds_otelemetry_mrb" (
