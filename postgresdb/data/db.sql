@@ -1,12 +1,65 @@
 START TRANSACTION;
+CREATE SEQUENCE "public"."att_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."dd_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."df_exec_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."df_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ds_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."dt_exec_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."dt_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ecombination_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."epoch_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."extractor_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."file_dt_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."file_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."file_type_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ialignmentmodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ialignmentmodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iconvertermodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iconvertermodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."imodelgeneratormodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."imodelgeneratormodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iprogramexecutemodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iprogramexecutemodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iremovepipemodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."iremovepipemodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."itelemetry_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."itelemetry_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ivalidationmodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ivalidationmodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oalignmentmodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oalignmentmodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oconvertermodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oconvertermodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."omodelgeneratormodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."omodelgeneratormodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oprogramexecutemodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oprogramexecutemodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oremovepipemodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."oremovepipemodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."otelemetry_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."otelemetry_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ovalidationmodule_mrb_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."ovalidationmodule_raxml_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."performance_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."physical_machine_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."program_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."task_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."telemetry_cpu_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."telemetry_disk_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."telemetry_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."telemetry_memory_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."telemetry_network_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."user_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."version_id_seq" AS INTEGER;
+CREATE SEQUENCE "public"."virtual_machine_id_seq" AS INTEGER;
 CREATE TABLE "public"."user_table" (
-	"id"    INTEGER       NOT NULL DEFAULT next value for "public"."user_id_seq",
+	"id"    INTEGER       NOT NULL DEFAULT nextval("public"."user_id_seq"),
 	"name"  VARCHAR(50)   NOT NULL,
 	"email" VARCHAR(50)   NOT NULL,
 	CONSTRAINT "user_table_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."physical_machine" (
-	"id"            INTEGER       NOT NULL DEFAULT next value for "public"."physical_machine_id_seq",
+	"id"            INTEGER       NOT NULL DEFAULT nextval("public"."physical_machine_id_seq"),
 	"name"          VARCHAR(50)   NOT NULL,
 	"ip"            VARCHAR(50)   NOT NULL,
 	"mac"           VARCHAR(50)   NOT NULL,
@@ -16,7 +69,7 @@ CREATE TABLE "public"."physical_machine" (
 	CONSTRAINT "physical_machine_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."virtual_machine" (
-	"id"                  INTEGER       NOT NULL DEFAULT next value for "public"."virtual_machine_id_seq",
+	"id"                  INTEGER       NOT NULL DEFAULT nextval("public"."virtual_machine_id_seq"),
 	"name"                VARCHAR(50)   NOT NULL,
 	"ram"                 INTEGER       NOT NULL,
 	"disk"                INTEGER       NOT NULL,
@@ -24,26 +77,26 @@ CREATE TABLE "public"."virtual_machine" (
 	CONSTRAINT "virtual_machine_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."dataflow" (
-	"id"      INTEGER       NOT NULL DEFAULT next value for "public"."df_id_seq",
+	"id"      INTEGER       NOT NULL DEFAULT nextval("public"."df_id_seq"),
 	"tag"     VARCHAR(50)   NOT NULL,
 	"user_id" INTEGER,
 	CONSTRAINT "dataflow_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."program" (
-	"id"      INTEGER       NOT NULL DEFAULT next value for "public"."program_id_seq",
+	"id"      INTEGER       NOT NULL DEFAULT nextval("public"."program_id_seq"),
 	"name"    VARCHAR(200)  NOT NULL,
 	"version" VARCHAR(50)   NOT NULL,
 	CONSTRAINT "program_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."data_transformation" (
-	"id"         INTEGER       NOT NULL DEFAULT next value for "public"."dt_id_seq",
+	"id"         INTEGER       NOT NULL DEFAULT nextval("public"."dt_id_seq"),
 	"df_id"      INTEGER       NOT NULL,
 	"tag"        VARCHAR(50)   NOT NULL,
 	"program_id" INTEGER,
 	CONSTRAINT "data_transformation_id_pkey" PRIMARY KEY ("id")
 );
 CREATE TABLE "public"."dataflow_version" (
-	"version" INTEGER       NOT NULL DEFAULT next value for "public"."version_id_seq",
+	"version" INTEGER       NOT NULL DEFAULT nextval("public"."version_id_seq"),
 	"df_id"   INTEGER       NOT NULL,
 	CONSTRAINT "dataflow_version_version_pkey" PRIMARY KEY ("version")
 );

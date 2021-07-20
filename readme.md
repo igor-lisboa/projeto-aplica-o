@@ -42,6 +42,9 @@ password: monetdb
 	* port: 5432
 	* username: postgres
 	* password: postgres
+### Estrutura
+* DOUBLE => DECIMAL
+* CHARACTER LARGE OBJECT => TEXT
 ## Tratar redis
 * Tenha o Redis Desktop Manager instalado: https://rdm.dev/pricing (para linux é gratuito)
 * connection string: redis://localhost:6379

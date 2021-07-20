@@ -31,7 +31,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=tcc
+      - POSTGRES_DB=public
     ports:
       - 5432:5432
   redisdb:
