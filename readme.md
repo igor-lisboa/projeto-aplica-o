@@ -37,13 +37,7 @@ password: monetdb
 	* password: neo4j
 ## Tratar postgres
 ### Restaurando databse a partir do dump
-```sh
-docker exec -it projeto_aplicacao_postgres bash
-```
-* comando que entra no terminal dentro do container
-```sh
-cd /var/data && psql -U postgres --set ON_ERROR_STOP=on -f db.sql
-```
+* Copie o conteúdo do arquivo /postgresdb/data/db.sql no DBEAVER ou SGBD da sua escolha, inicie um novo editor sql, cole o conteudo e execute-o por inteiro
 ### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco postgres...
 	* host: localhost
