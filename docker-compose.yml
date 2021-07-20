@@ -28,10 +28,13 @@ services:
     image: postgres:13.3
     container_name: projeto_aplicacao_postgres
     restart: always
+    volumes:
+      - ./postgresdb/data:/var/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=public
+    user: postgres
     ports:
       - 5432:5432
   redisdb:
