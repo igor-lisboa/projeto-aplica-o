@@ -52,6 +52,3 @@ password: monetdb
 	* DEVIDO AO PROBLEMA:
 		* SQL Error [0A000]: ERROR: cannot use column reference in DEFAULT expression
 			* Isso impedia configurar o valor do campo para ser o default que o sequence trouxesse.
-## Tratar redis
-* Tenha o Redis Desktop Manager instalado: https://rdm.dev/pricing (para linux é gratuito)
-* connection string: redis://localhost:6379
