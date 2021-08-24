@@ -37,9 +37,3 @@ services:
     user: postgres
     ports:
       - 5432:5432
-  redisdb:
-    image: redis:6.2
-    container_name: projeto_aplicacao_redis
-    restart: always
-    ports:
-      - 6379:6379
