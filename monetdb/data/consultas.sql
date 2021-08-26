@@ -49,3 +49,41 @@ from
 group by
 	t.data_transformation_id,
 	t.data_transformation_tag;
+-- 	A telemetria foi capturada em intervalos de 20/30s (uso de cpu, disco, memória). Em  telemetry tem o id de execução de cada transformação executada (data_transformation_execution_id): Consulta para identificar consumo de recurso por transformação (relacionando telemetry data_transformation_execution_id com data_transformation) e por dataflow.
+select
+	t.data_transformation_execution_id,
+	count(t.data_transformation_execution_id) as count_data_transformation_exec,
+	avg(tm.svmem_total) as avg_svmem_total,
+	sum(tm.svmem_total) as sum_svmem_total,
+	avg(tm.svmem_available) as avg_svmem_available,
+	sum(tm.svmem_available) as sum_svmem_available,
+	avg(tm.svmem_used) as avg_svmem_used,
+	sum(tm.svmem_used) as sum_svmem_used,
+	avg(cast( tc.scputimes_user as double)) as avg_scputimes_user,
+	sum(cast( tc.scputimes_user as double)) as sum_scputimes_user,
+	avg(cast( tc.scputimes_system as double)) as avg_scputimes_system,
+	sum(cast( tc.scputimes_system as double)) as sum_scputimes_system,
+	avg(cast( tc.scputimes_idle as double)) as avg_scputimes_idle,
+	sum(cast( tc.scputimes_idle as double)) as sum_scputimes_idle,
+	avg(cast( tc.scputimes_steal as double)) as avg_scputimes_steal,
+	sum(cast( tc.scputimes_steal as double)) as sum_scputimes_steal,
+	avg(cast( td.sdiskio_read_bytes as double)) as avg_sdiskio_read_bytes,
+	sum(cast( td.sdiskio_read_bytes as double)) as sum_sdiskio_read_bytes,
+	avg(cast( td.sdiskio_write_bytes as double)) as avg_sdiskio_write_bytes,
+	sum(cast( td.sdiskio_write_bytes as double)) as sum_sdiskio_write_bytes,
+	avg(cast( td.sdiskio_busy_time as double)) as avg_sdiskio_busy_time,
+	sum(cast( td.sdiskio_busy_time as double)) as sum_sdiskio_busy_time,
+	avg(cast( td.sswap_total as double)) as avg_sswap_total,
+	sum(cast( td.sswap_total as double)) as sum_sswap_total
+	--avg(cast( td.sswap_used as double)) as avg_sswap_used, => nao usado pq os valores estao com a string 'null'
+	--sum(cast( td.sswap_used as double)) as sum_sswap_used => nao usado pq os valores estao com a string 'null'
+from
+	telemetry t
+left join telemetry_cpu tc on
+	(t.id = tc.telemetry_id)
+left join telemetry_disk td on
+	(t.id = td.telemetry_id )
+left join telemetry_memory tm on
+	(t.id = tm.telemetry_id)
+group by
+	t.data_transformation_execution_id;
