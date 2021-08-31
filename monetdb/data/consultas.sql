@@ -101,3 +101,34 @@ group by
 order by
 	2 desc;
 --Consulta de domínio: quantitativo de modelos evolutivos calculados -> disponíveis nos datasets de  saída da transformação modelgeneratormodule_raxml ou _mrb (ds_omodelgeneratormodule_mrb, _raxml)
+select
+	uniao.qtd,
+	uniao.model,
+	uniao.program
+from
+	(
+	select
+		mrb.*
+	from
+		(
+		select
+			count(*) qtd,
+			domrb.model,
+			'mrb' program
+		from
+			ds_omodelgeneratormodule_mrb domrb
+		group by
+			domrb.model) mrb
+union
+	select
+		raxml.*
+	from
+		(
+		select
+			count(*) qtd,
+			doraxml.model,
+			'raxml' program
+		from
+			ds_omodelgeneratormodule_raxml doraxml
+		group by
+			doraxml.model) raxml) uniao order by 1 desc;
