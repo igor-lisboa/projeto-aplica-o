@@ -131,3 +131,10 @@
 * Próximo Entregável:
 	* Estruturar dados nos outros bds sem ser o monetdb a partir da estrutura presente no dump
 * Criar grupo telegram para o TCC
+
+# 24/08/2021
+* dataflow_execution
+	* primeira tarefa ate a ultima do pipeline
+* neo4j
+	* tuplas que vao virar os nos
+	* no pra task 01 aresta entre as 2
