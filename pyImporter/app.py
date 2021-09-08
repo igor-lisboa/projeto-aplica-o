@@ -6,7 +6,7 @@ qtdPerPage = 10
 # import the SQL module
 # set up a connection. arguments below are the defaults
 monetdbConn = pymonetdb.connect(
-    username="monetdb", password="monetdb", hostname="localhost", database="sciphy_dados")
+    username="monetdb", password="monetdb", hostname="projeto_aplicacao_monetdb", database="sciphy_dados")
 
 # create a cursor
 cursor = monetdbConn.cursor()
@@ -25,6 +25,7 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
     ultima_pagina = int(cursor.fetchone()[0])
 
     while(pagina <= ultima_pagina):
+        print('percorrendo a pagina ' + str(pagina) + '\n')
         offset = ''
 
         if(pagina > 1):

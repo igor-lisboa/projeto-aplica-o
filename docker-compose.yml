@@ -37,3 +37,13 @@ services:
     user: postgres
     ports:
       - 5432:5432
+  pyimporter:
+    build:
+      context: ./pyImporter
+      dockerfile: ./Dockerfile
+    container_name: projeto_aplicacao_pyimporter
+    depends_on:
+      - postgresdb
+      - neo4jdb
+      - mongodb
+      - monetdb
