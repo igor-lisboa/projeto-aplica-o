@@ -1,2 +1,1 @@
 pymonetdb==1.4.1
-psycopg==1.1.21 
