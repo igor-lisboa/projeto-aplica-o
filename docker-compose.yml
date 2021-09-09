@@ -29,7 +29,7 @@ services:
     container_name: projeto_aplicacao_postgres
     restart: always
     volumes:
-      - ./postgresdb/data:/var/data
+      - ./postgresdb/data:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -37,13 +37,3 @@ services:
     user: postgres
     ports:
       - 5432:5432
-  pyimporter:
-    build:
-      context: ./pyImporter
-      dockerfile: ./Dockerfile
-    container_name: projeto_aplicacao_pyimporter
-    depends_on:
-      - postgresdb
-      - neo4jdb
-      - mongodb
-      - monetdb
