@@ -3,7 +3,6 @@ services:
   monetdb:
     image: monetdb/monetdb:Oct2020-SP3
     container_name: projeto_aplicacao_monetdb
-    restart: always
     volumes:
       - ./monetdb/data:/var/data
     ports:

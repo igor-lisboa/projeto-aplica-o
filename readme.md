@@ -7,19 +7,13 @@ docker compose up --build -d
 ```
 ## Tratar monetdb
 ### Restaurando databse a partir do dump
+* Abre o bash no container do monetdb
 ```sh
 docker exec -it projeto_aplicacao_monetdb bash
 ```
-* comando que entra no terminal dentro do container
+* Prepara a base de dados sciphy
 ```sh
-monetdbd create mydbfarm && cd mydbfarm && monetdbd get all ./ && monetdb create sciphy_dados && monetdb release sciphy_dados && cd ../../../var/data
-```
-```sh
-mclient -u monetdb -d sciphy_dados
-password: monetdb
-```
-```sql
-\<dados_sciphy.sql
+monetdbd create mydbfarm && cd mydbfarm && monetdbd get all ./ && monetdb create sciphy_dados && monetdb release sciphy_dados && cp ../.monetdb .monetdb && cd ../../../var/data && mclient -d sciphy_dados \< dados_sciphy.sql
 ```
 ### SGBD
 * Estou usando o dbeaver para fazer conexão com o banco monetdb...
