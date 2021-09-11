@@ -1,7 +1,11 @@
 import pymonetdb
+import json
 from pymonetdb.sql.cursors import Cursor
+from data.postgresRepository import PostgresRepository
 
 qtdPerPage = 10
+
+pgsqlConn = PostgresRepository("localhost", "public", "postgres", "postgres")
 
 # import the SQL module
 # set up a connection. arguments below are the defaults
@@ -20,23 +24,68 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
 
     pagina = 1
 
+    tabela = consulta.split()[-1]
+
+    insert_query = "INSERT INTO " + tabela
+    insert_query_colunas = ""
+
     cursor.execute(
         'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')
     ultima_pagina = int(cursor.fetchone()[0])
 
     while(pagina <= ultima_pagina):
-        print('percorrendo a pagina ' + str(pagina) + '\n')
+        print('percorrendo a pagina ' + str(pagina) + ' de ' +
+              str(ultima_pagina) + ' da consulta ' + consulta + '\n')
         offset = ''
 
         if(pagina > 1):
             offset = ' OFFSET ' + str((pagina-1) * qtdPerPage) + ' '
 
         cursor.execute(consulta+limit+offset)
-        cursor.fetchall()
+        resultado = cursor.fetchall()
 
-        if(pagina == 1):
-            # Show the table meta data
-            cursor.description
+        if len(resultado) > 0:
+
+            values_bind_consulta = ""
+
+            if(pagina == 1):
+
+                for coluna in cursor.description:
+
+                    if insert_query_colunas != "":
+                        insert_query_colunas += ","
+                        values_bind_consulta += ","
+
+                    insert_query_colunas += coluna[0]
+                    values_bind_consulta += "%s"
+
+                insert_query += "("+insert_query_colunas + \
+                    ") VALUES "
+
+                values_bind_consulta = "("+values_bind_consulta+")"
+
+            bind = []
+
+            values_consulta = ""
+
+            for tupla in resultado:
+                for value in tupla:
+
+                    if value == 'null':
+                        value = None
+
+                    bind.append(value)
+
+                if values_consulta != "":
+                    values_consulta += ","
+
+                values_consulta += values_bind_consulta
+
+            insert_query += values_consulta
+
+            print('Executando a query: ' + insert_query + " no POSTGRES, com os valores: "+ json.dumps(bind))
+
+            pgsqlConn.manipular(insert_query, bind)
 
         pagina += 1
 
@@ -80,3 +129,5 @@ tabelas = [
 
 for consulta in tabelas:
     percorre_tabelas(cursor, consulta)
+
+pgsqlConn.fechar()
