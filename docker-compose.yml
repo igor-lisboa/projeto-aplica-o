@@ -36,3 +36,9 @@ services:
     user: postgres
     ports:
       - 5432:5432
+  pyimporter:
+    image: python:3.8
+    volumes:
+      - ./pyImporter:/var/app
+    command: python /var/app/app.py
+    container_name: projeto_aplicacao_pyimporter
