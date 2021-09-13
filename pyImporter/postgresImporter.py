@@ -3,7 +3,7 @@ import json
 from pymonetdb.sql.cursors import Cursor
 from data.postgresRepository import PostgresRepository
 
-qtdPerPage = 10
+qtdPerPage = 50
 verbose_level = 2
 rodando_no_docker = True
 
@@ -43,6 +43,8 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
     cursor.execute(
         'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')
     ultima_pagina = int(cursor.fetchone()[0])
+    if ultima_pagina < 1:
+        ultima_pagina = 1
 
     while(pagina <= ultima_pagina):
         if verbose_level > 0:
@@ -169,3 +171,7 @@ if verbose_level > 0:
 pgsqlConn.manipular(set_fks)
 
 pgsqlConn.fechar()
+
+# mechando monetdb
+cursor.close()
+monetdbConn.close()
