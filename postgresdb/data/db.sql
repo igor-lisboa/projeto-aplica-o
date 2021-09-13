@@ -117,7 +117,7 @@ CREATE TABLE "public"."performance" (
 	"id"       SERIAL,
 	"task_id"     INTEGER       NOT NULL,
 	"subtask_id"  INTEGER,
-	"method"      VARCHAR(30)   NOT NULL,
+	"method"      VARCHAR(30),
 	"description" VARCHAR(200),
 	"starttime"   VARCHAR(30),
 	"endtime"     VARCHAR(30),
@@ -413,69 +413,4 @@ CREATE TABLE "public"."ds_otelemetry_mrb" (
 	"sdiskio_write_time"          VARCHAR(100000),
 	CONSTRAINT "ds_otelemetry_mrb_id_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."attribute" ADD CONSTRAINT "attribute_ds_id_fkey" FOREIGN KEY ("ds_id") REFERENCES "public"."data_set" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."attribute" ADD CONSTRAINT "attribute_extractor_id_fkey" FOREIGN KEY ("extractor_id") REFERENCES "public"."extractor" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_dependency" ADD CONSTRAINT "data_dependency_ds_id_fkey" FOREIGN KEY ("ds_id") REFERENCES "public"."data_set" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_dependency" ADD CONSTRAINT "data_dependency_next_dt_id_fkey" FOREIGN KEY ("next_dt_id") REFERENCES "public"."data_transformation" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_dependency" ADD CONSTRAINT "data_dependency_previous_dt_id_fkey" FOREIGN KEY ("previous_dt_id") REFERENCES "public"."data_transformation" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_set" ADD CONSTRAINT "data_set_df_id_fkey" FOREIGN KEY ("df_id") REFERENCES "public"."dataflow" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_transformation" ADD CONSTRAINT "data_transformation_df_id_fkey" FOREIGN KEY ("df_id") REFERENCES "public"."dataflow" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_transformation" ADD CONSTRAINT "data_transformation_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "public"."program" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_transformation_execution" ADD CONSTRAINT "data_transformation_execution_data_transformation_id_fkey" FOREIGN KEY ("data_transformation_id") REFERENCES "public"."data_transformation" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."data_transformation_execution" ADD CONSTRAINT "data_transformation_execution_dataflow_execution_id_fkey" FOREIGN KEY ("dataflow_execution_id") REFERENCES "public"."dataflow_execution" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."dataflow" ADD CONSTRAINT "dataflow_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."dataflow_execution" ADD CONSTRAINT "dataflow_execution_df_id_fkey" FOREIGN KEY ("df_id") REFERENCES "public"."dataflow" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."dataflow_execution" ADD CONSTRAINT "dataflow_execution_physical_machine_id_fkey" FOREIGN KEY ("physical_machine_id") REFERENCES "public"."physical_machine" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."dataflow_execution" ADD CONSTRAINT "dataflow_execution_virtual_machine_id_fkey" FOREIGN KEY ("virtual_machine_id") REFERENCES "public"."virtual_machine" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."dataflow_version" ADD CONSTRAINT "dataflow_version_df_id_fkey" FOREIGN KEY ("df_id") REFERENCES "public"."dataflow" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ialignmentmodule_mrb" ADD CONSTRAINT "ds_ialignmentmodule_mrb_alignmentmodule_mrb_task_id_fkey" FOREIGN KEY ("alignmentmodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ialignmentmodule_raxml" ADD CONSTRAINT "ds_ialignmentmodule_raxml_alignmentmodule_raxml_task_id_fkey" FOREIGN KEY ("alignmentmodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iconvertermodule_mrb" ADD CONSTRAINT "ds_iconvertermodule_mrb_convertermodule_mrb_task_id_fkey" FOREIGN KEY ("convertermodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iconvertermodule_raxml" ADD CONSTRAINT "ds_iconvertermodule_raxml_convertermodule_raxml_task_id_fkey" FOREIGN KEY ("convertermodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_imodelgeneratormodule_mrb" ADD CONSTRAINT "ds_imodelgeneratormodule_mrb_modelgeneratormodule_mrb_task_id_fkey" FOREIGN KEY ("modelgeneratormodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_imodelgeneratormodule_raxml" ADD CONSTRAINT "ds_imodelgeneratormodule_raxml_modelgeneratormodule_raxml_task_id_fkey" FOREIGN KEY ("modelgeneratormodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iprogramexecutemodule_mrb" ADD CONSTRAINT "ds_iprogramexecutemodule_mrb_programexecutemodule_mrb_task_id_fkey" FOREIGN KEY ("programexecutemodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iprogramexecutemodule_raxml" ADD CONSTRAINT "ds_iprogramexecutemodule_raxml_programexecutemodule_raxml_task_id_fkey" FOREIGN KEY ("programexecutemodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iremovepipemodule_mrb" ADD CONSTRAINT "ds_iremovepipemodule_mrb_removepipemodule_mrb_task_id_fkey" FOREIGN KEY ("removepipemodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_iremovepipemodule_raxml" ADD CONSTRAINT "ds_iremovepipemodule_raxml_removepipemodule_raxml_task_id_fkey" FOREIGN KEY ("removepipemodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_itelemetry_mrb" ADD CONSTRAINT "ds_itelemetry_mrb_telemetrymodule_mrb_task_id_fkey" FOREIGN KEY ("telemetrymodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_itelemetry_raxml" ADD CONSTRAINT "ds_itelemetry_raxml_telemetrymodule_raxml_task_id_fkey" FOREIGN KEY ("telemetrymodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ivalidationmodule_mrb" ADD CONSTRAINT "ds_ivalidationmodule_mrb_validationmodule_mrb_task_id_fkey" FOREIGN KEY ("validationmodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ivalidationmodule_raxml" ADD CONSTRAINT "ds_ivalidationmodule_raxml_validationmodule_raxml_task_id_fkey" FOREIGN KEY ("validationmodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oalignmentmodule_mrb" ADD CONSTRAINT "ds_oalignmentmodule_mrb_alignmentmodule_mrb_task_id_fkey" FOREIGN KEY ("alignmentmodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oalignmentmodule_raxml" ADD CONSTRAINT "ds_oalignmentmodule_raxml_alignmentmodule_raxml_task_id_fkey" FOREIGN KEY ("alignmentmodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oconvertermodule_mrb" ADD CONSTRAINT "ds_oconvertermodule_mrb_convertermodule_mrb_task_id_fkey" FOREIGN KEY ("convertermodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oconvertermodule_raxml" ADD CONSTRAINT "ds_oconvertermodule_raxml_convertermodule_raxml_task_id_fkey" FOREIGN KEY ("convertermodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_omodelgeneratormodule_mrb" ADD CONSTRAINT "ds_omodelgeneratormodule_mrb_modelgeneratormodule_mrb_task_id_fkey" FOREIGN KEY ("modelgeneratormodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_omodelgeneratormodule_raxml" ADD CONSTRAINT "ds_omodelgeneratormodule_raxml_modelgeneratormodule_raxml_task_id_fkey" FOREIGN KEY ("modelgeneratormodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oprogramexecutemodule_mrb" ADD CONSTRAINT "ds_oprogramexecutemodule_mrb_programexecutemodule_mrb_task_id_fkey" FOREIGN KEY ("programexecutemodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oprogramexecutemodule_raxml" ADD CONSTRAINT "ds_oprogramexecutemodule_raxml_programexecutemodule_raxml_task_id_fkey" FOREIGN KEY ("programexecutemodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oremovepipemodule_mrb" ADD CONSTRAINT "ds_oremovepipemodule_mrb_removepipemodule_mrb_task_id_fkey" FOREIGN KEY ("removepipemodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_oremovepipemodule_raxml" ADD CONSTRAINT "ds_oremovepipemodule_raxml_removepipemodule_raxml_task_id_fkey" FOREIGN KEY ("removepipemodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_otelemetry_mrb" ADD CONSTRAINT "ds_otelemetry_mrb_telemetrymodule_mrb_task_id_fkey" FOREIGN KEY ("telemetrymodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_otelemetry_raxml" ADD CONSTRAINT "ds_otelemetry_raxml_telemetrymodule_raxml_task_id_fkey" FOREIGN KEY ("telemetrymodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ovalidationmodule_mrb" ADD CONSTRAINT "ds_ovalidationmodule_mrb_validationmodule_mrb_task_id_fkey" FOREIGN KEY ("validationmodule_mrb_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."ds_ovalidationmodule_raxml" ADD CONSTRAINT "ds_ovalidationmodule_raxml_validationmodule_raxml_task_id_fkey" FOREIGN KEY ("validationmodule_raxml_task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."epoch" ADD CONSTRAINT "epoch_data_transformation_execution_id_fkey" FOREIGN KEY ("data_transformation_execution_id") REFERENCES "public"."data_transformation_execution" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."epoch" ADD CONSTRAINT "epoch_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."extractor" ADD CONSTRAINT "extractor_ds_id_fkey" FOREIGN KEY ("ds_id") REFERENCES "public"."data_set" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."extractor_combination" ADD CONSTRAINT "extractor_combination_ds_id_fkey" FOREIGN KEY ("ds_id") REFERENCES "public"."data_set" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."extractor_combination" ADD CONSTRAINT "extractor_combination_inner_ext_id_fkey" FOREIGN KEY ("inner_ext_id") REFERENCES "public"."extractor" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."extractor_combination" ADD CONSTRAINT "extractor_combination_outer_ext_id_fkey" FOREIGN KEY ("outer_ext_id") REFERENCES "public"."extractor" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."file" ADD CONSTRAINT "file_id_file_type_fkey" FOREIGN KEY ("id_file_type") REFERENCES "public"."file_type" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."file_transformation_execution" ADD CONSTRAINT "file_transformation_execution_data_transformation_execution_id_fkey" FOREIGN KEY ("data_transformation_execution_id") REFERENCES "public"."data_transformation_execution" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."file_transformation_execution" ADD CONSTRAINT "file_transformation_execution_file_id_fkey" FOREIGN KEY ("file_id") REFERENCES "public"."file" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."performance" ADD CONSTRAINT "performance_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."physical_machine" ADD CONSTRAINT "physical_machine_owner_user_id_fkey" FOREIGN KEY ("owner_user_id") REFERENCES "public"."user_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."task" ADD CONSTRAINT "task_df_version_fkey" FOREIGN KEY ("df_version") REFERENCES "public"."dataflow_version" ("version") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."task" ADD CONSTRAINT "task_dt_id_fkey" FOREIGN KEY ("dt_id") REFERENCES "public"."data_transformation" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry" ADD CONSTRAINT "telemetry_data_transformation_execution_id_fkey" FOREIGN KEY ("data_transformation_execution_id") REFERENCES "public"."data_transformation_execution" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry" ADD CONSTRAINT "telemetry_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "public"."task" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry_cpu" ADD CONSTRAINT "telemetry_cpu_telemetry_id_fkey" FOREIGN KEY ("telemetry_id") REFERENCES "public"."telemetry" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry_disk" ADD CONSTRAINT "telemetry_disk_telemetry_id_fkey" FOREIGN KEY ("telemetry_id") REFERENCES "public"."telemetry" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry_memory" ADD CONSTRAINT "telemetry_memory_telemetry_id_fkey" FOREIGN KEY ("telemetry_id") REFERENCES "public"."telemetry" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."telemetry_network" ADD CONSTRAINT "telemetry_network_telemetry_id_fkey" FOREIGN KEY ("telemetry_id") REFERENCES "public"."telemetry" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."use_program" ADD CONSTRAINT "use_program_dt_id_fkey" FOREIGN KEY ("dt_id") REFERENCES "public"."data_transformation" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."use_program" ADD CONSTRAINT "use_program_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "public"."program" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "public"."virtual_machine" ADD CONSTRAINT "virtual_machine_physical_machine_id_fkey" FOREIGN KEY ("physical_machine_id") REFERENCES "public"."physical_machine" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;

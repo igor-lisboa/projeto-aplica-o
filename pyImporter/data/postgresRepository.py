@@ -8,24 +8,17 @@ class PostgresRepository(object):
         self._db = psycopg2.connect(
             host=mhost, database=db, user=usr,  password=pwd)
 
-    def manipular(self, sql: str, bind: list):
-        try:
-            cur = self._db.cursor()
-            cur.execute(sql, bind)
-            cur.close()
-            self._db.commit()
-        except:
-            return False
-        return True
+    def manipular(self, sql: str, bind: list = []):
+        cur = self._db.cursor()
+        cur.execute(sql, bind)
+        cur.close()
+        self._db.commit()
 
-    def consultar(self, sql: str, bind: list):
+    def consultar(self, sql: str, bind: list = []):
         rs = None
-        try:
-            cur = self._db.cursor()
-            cur.execute(sql, bind)
-            rs = cur.fetchall()
-        except:
-            return None
+        cur = self._db.cursor()
+        cur.execute(sql, bind)
+        rs = cur.fetchall()
         return rs
 
     def fechar(self):
