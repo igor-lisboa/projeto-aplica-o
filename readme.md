@@ -33,3 +33,5 @@ bash start.sh
 	* DEVIDO AO PROBLEMA:
 		* SQL Error [0A000]: ERROR: cannot use column reference in DEFAULT expression
 			* Isso impedia configurar o valor do campo para ser o default que o sequence trouxesse.
+## Documento do Projeto de Aplicação
+https://docs.google.com/document/d/1UQB0x5TJVTB5x0rAHzSBzTY1mJK9CxdwBEkLoQZp-cY/edit?usp=sharing
