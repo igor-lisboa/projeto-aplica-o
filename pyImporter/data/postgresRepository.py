@@ -19,6 +19,7 @@ class PostgresRepository(object):
         cur = self._db.cursor()
         cur.execute(sql, bind)
         rs = cur.fetchall()
+        cur.close()
         return rs
 
     def fechar(self):
