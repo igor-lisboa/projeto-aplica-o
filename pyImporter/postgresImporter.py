@@ -1,7 +1,6 @@
-import pymonetdb
 import json
-from pymonetdb.sql.cursors import Cursor
 from data.postgresRepository import PostgresRepository
+from data.monetRepository import MonetRepository
 
 qtdPerPage = 50
 verbose_level = 2
@@ -16,19 +15,11 @@ if rodando_no_docker:
 pgsqlConn = PostgresRepository(
     host_postgres, "public", "postgres", "postgres")
 
-# import the SQL module
-# set up a connection. arguments below are the defaults
-monetdbConn = pymonetdb.connect(
-    username="monetdb", password="monetdb", hostname=host_monetdb, database="sciphy_dados")
-
-# create a cursor
-cursor = monetdbConn.cursor()
-
-# increase the rows fetched to increase performance (optional)
-cursor.arraysize = 100
+monetdbConn = MonetRepository(
+    host_monetdb, "sciphy_dados", "monetdb", "monetdb")
 
 
-def percorre_tabelas(cursor: Cursor, consulta: str):
+def percorre_tabelas(consulta: str):
     limit = ' LIMIT ' + str(qtdPerPage) + ' '
 
     pagina = 1
@@ -40,9 +31,8 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
     insert_query = "INSERT INTO " + esquema_postgres + "."+tabela
     insert_query_colunas = ""
 
-    cursor.execute(
-        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')
-    ultima_pagina = int(cursor.fetchone()[0])
+    ultima_pagina = int(monetdbConn.consultar(
+        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')[0][0])
     if ultima_pagina < 1:
         ultima_pagina = 1
 
@@ -55,8 +45,7 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
         if(pagina > 1):
             offset = ' OFFSET ' + str((pagina-1) * qtdPerPage) + ' '
 
-        cursor.execute(consulta+limit+offset)
-        resultado = cursor.fetchall()
+        resultado = monetdbConn.consultar(consulta+limit+offset)
 
         if len(resultado) > 0:
 
@@ -64,7 +53,7 @@ def percorre_tabelas(cursor: Cursor, consulta: str):
 
             if(pagina == 1):
 
-                for coluna in cursor.description:
+                for coluna in monetdbConn.recupera_estrutura(consulta+limit+offset):
 
                     if insert_query_colunas != "":
                         insert_query_colunas += ","
@@ -145,7 +134,7 @@ tabelas = [
 
 for consulta in tabelas:
     try:
-        percorre_tabelas(cursor, consulta)
+        percorre_tabelas(consulta)
     except Exception as ex:
         print("Erro: "+str(ex) + " na consulta: "+consulta + "\n\n\n")
         raise ex
@@ -171,7 +160,4 @@ if verbose_level > 0:
 pgsqlConn.manipular(set_fks)
 
 pgsqlConn.fechar()
-
-# mechando monetdb
-cursor.close()
-monetdbConn.close()
+monetdbConn.fechar()
