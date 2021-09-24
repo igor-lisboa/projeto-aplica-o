@@ -1,5 +1,3 @@
--- versao inicial(sem funcionar ainda)
-
 -- Cada execução tem um id em dataflow e seu timestamp em dataflow_execution: consulta de tempos de execução para cada execução realizada.
 -- todas as execucoes foram executadas em sequencia ou houve paralelismo na execucao ? pq oq estou fazendo pra definir tempo de execucao eh pegar a hr de inicio da execucao seguinte e reduzir da hr de inicio da execucao atual
 select
@@ -105,7 +103,7 @@ order by
 select
     uniao.qtd,
     uniao.model,
-    uniao.program
+    uniao.prog
 from
     (
     select
@@ -115,7 +113,7 @@ from
         select
             count(*) qtd,
             domrb.model,
-            'mrb' program
+            'mrb' prog
         from
             ds_omodelgeneratormodule_mrb domrb
         group by
@@ -128,7 +126,7 @@ union
         select
             count(*) qtd,
             doraxml.model,
-            'raxml' program
+            'raxml' prog
         from
             ds_omodelgeneratormodule_raxml doraxml
         group by
