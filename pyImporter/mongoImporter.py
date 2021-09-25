@@ -24,7 +24,12 @@ importDictionary = {}
 dataflow = {}
 dataflow["consulta"] = "select   d.id,   d.tag,   sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id)  order by   de.execution_datetime,   d.id"
 
+data_transformation = {}
+data_transformation[
+    "consulta"] = "select   dte.id,   dte.dataflow_execution_id,   dte.data_transformation_id,   dt.tag as data_transformation_tag,   sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime  from   data_transformation_execution dte  left join data_transformation dt on   (dt.id = dte.data_transformation_id)"
+
 importDictionary["dataflow"] = dataflow
+importDictionary["data_transformation"] = data_transformation
 
 
 def insere_documentos(dictionary: dict, chave_pai: str = ""):
@@ -52,12 +57,27 @@ def insere_documentos(dictionary: dict, chave_pai: str = ""):
                 if(pagina > 1):
                     offset = ' OFFSET ' + str((pagina-1) * qtdPerPage) + ' '
 
+                dict_to_insert = tuple_list_to_dictionary(
+                    consulta+limit+offset)
+
                 mongoConn.insere(
-                    chave_pai, tuple_list_to_dictionary(consulta+limit+offset))
+                    chave_pai, dict_to_insert)
 
                 pagina += 1
         else:
             insere_documentos(dictionary[chave], chave)
+
+
+def recupera_retornos_pra_colocar_dicionario_a_ser_inserido(dictionary: dict):
+    # apenas teste por enquanto
+    chaves = dictionary.keys()
+    retorno = {}
+    for chave in chaves:
+        if(chave != "consulta"):
+            dict_obj = dictionary[chave]
+            monetdbConn.consultar(dict_obj['obj'])
+
+    return retorno
 
 
 def tuple_list_to_dictionary(consulta: str):
@@ -79,3 +99,5 @@ def tuple_list_to_dictionary(consulta: str):
 
 
 insere_documentos(importDictionary)
+
+monetdbConn.fechar()
