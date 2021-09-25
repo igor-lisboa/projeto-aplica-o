@@ -10,11 +10,11 @@ from
     (
     select
         d.id,
-        LEAD( TO_TIMESTAMP(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (
+        LEAD( TO_TIMESTAMP(de.execution_datetime, 'YYYY-MM-DD HH24:MI:SS') ) over (
     order by
         de.execution_datetime,
         d.id) as next_execution_datetime,
-        TO_TIMESTAMP(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime
+        TO_TIMESTAMP(de.execution_datetime, 'YYYY-MM-DD HH24:MI:SS') as execution_datetime
     from
         dataflow d
     left join dataflow_execution de on
@@ -38,8 +38,8 @@ from
         dte.dataflow_execution_id,
         dte.data_transformation_id,
         dt.tag as data_transformation_tag,
-        TO_TIMESTAMP(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as current_execution_datetime,
-        LEAD( TO_TIMESTAMP(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (
+        TO_TIMESTAMP(dte.execution_datetime, 'YYYY-MM-DD HH24:MI:SS') as current_execution_datetime,
+        LEAD( TO_TIMESTAMP(dte.execution_datetime, 'YYYY-MM-DD HH24:MI:SS') ) over (
     order by
         dte.execution_datetime,
         dte.id) as next_execution_datetime
