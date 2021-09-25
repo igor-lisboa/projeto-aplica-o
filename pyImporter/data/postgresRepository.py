@@ -1,4 +1,5 @@
 import psycopg2
+import datetime
 
 
 class PostgresRepository(object):
@@ -21,6 +22,14 @@ class PostgresRepository(object):
         rs = cur.fetchall()
         cur.close()
         return rs
+
+    def recupera_tempo(self, sql: str, bind: list = []):
+        cur = self._db.cursor()
+        init_time = datetime.datetime.now()
+        cur.execute(sql, bind)
+        end_time = datetime.datetime.now()
+
+        return end_time - init_time
 
     def fechar(self):
         self._db.close()

@@ -1,4 +1,3 @@
-from pymongo import results
 from data.mongoRepository import MongoRepository
 from data.monetRepository import MonetRepository
 

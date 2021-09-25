@@ -1,5 +1,6 @@
 import pymonetdb
 from pymonetdb.sql.connections import Connection
+import datetime
 
 
 class MonetRepository(object):
@@ -29,6 +30,14 @@ class MonetRepository(object):
         estrutura = cur.description
         cur.close()
         return estrutura
+
+    def recupera_tempo(self, sql: str, bind: list = []):
+        cur = self._db.cursor()
+        init_time = datetime.datetime.now()
+        cur.execute(sql, bind)
+        end_time = datetime.datetime.now()
+
+        return end_time - init_time
 
     def fechar(self):
         self._db.close()
