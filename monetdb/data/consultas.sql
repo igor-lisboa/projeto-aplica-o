@@ -1,4 +1,3 @@
-
 -- Cada execução tem um id em dataflow e seu timestamp em dataflow_execution: consulta de tempos de execução para cada execução realizada.
 -- todas as execucoes foram executadas em sequencia ou houve paralelismo na execucao ? pq oq estou fazendo pra definir tempo de execucao eh pegar a hr de inicio da execucao seguinte e reduzir da hr de inicio da execucao atual
 select

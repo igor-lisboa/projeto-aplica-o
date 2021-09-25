@@ -15,4 +15,10 @@ mongoConn = MongoRepository(
 monetdbConn = MonetRepository(
     host_monetdb, "sciphy_dados", "monetdb", "monetdb")
 
-mongoConn.insere("teste", [{"x": "uhu"}])
+
+importArr = {}
+
+dataflow = {}
+dataflow["consulta"] = "select   d.id,   d.tag,   sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id)  order by   de.execution_datetime,   d.id"
+
+importArr["dataflow"] = dataflow
