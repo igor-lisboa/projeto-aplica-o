@@ -1,13 +1,15 @@
 from datetime import datetime
-import json
 from data.postgresRepository import PostgresRepository
 from data.monetRepository import MonetRepository
+from data.mongoRepository import MongoRepository
 
 rodando_no_docker = False
 
+host_mongo = "localhost"
 host_postgres = "localhost"
 host_monetdb = "localhost"
 if rodando_no_docker:
+    host_mongo = "projeto_aplicacao_mongodb"
     host_postgres = "projeto_aplicacao_postgres"
     host_monetdb = "projeto_aplicacao_monetdb"
 
@@ -16,6 +18,9 @@ pgsqlConn = PostgresRepository(
 
 monetdbConn = MonetRepository(
     host_monetdb, "sciphy_dados", "monetdb", "monetdb")
+
+mongoConn = MongoRepository(
+    connection_string="mongodb://root:root_password@" + host_mongo + ":27017", bd="tcc")
 
 
 consultas_postgres = [
@@ -31,10 +36,6 @@ consultas_monet = [
     "select  t.data_transformation_execution_id,  dt.tag,  count(t.data_transformation_execution_id) as count_data_transformation_exec,  avg(tm.svmem_total) as avg_svmem_total,  sum(tm.svmem_total) as sum_svmem_total,  avg(tm.svmem_available) as avg_svmem_available,  sum(tm.svmem_available) as sum_svmem_available,  avg(tm.svmem_used) as avg_svmem_used,  sum(tm.svmem_used) as sum_svmem_used,  avg(cast( tc.scputimes_user as double)) as avg_scputimes_user,  sum(cast( tc.scputimes_user as double)) as sum_scputimes_user,  avg(cast( tc.scputimes_system as double)) as avg_scputimes_system,  sum(cast( tc.scputimes_system as double)) as sum_scputimes_system,  avg(cast( tc.scputimes_idle as double)) as avg_scputimes_idle,  sum(cast( tc.scputimes_idle as double)) as sum_scputimes_idle,  avg(cast( tc.scputimes_steal as double)) as avg_scputimes_steal,  sum(cast( tc.scputimes_steal as double)) as sum_scputimes_steal,  avg(cast( td.sdiskio_read_bytes as double)) as avg_sdiskio_read_bytes,  sum(cast( td.sdiskio_read_bytes as double)) as sum_sdiskio_read_bytes,  avg(cast( td.sdiskio_write_bytes as double)) as avg_sdiskio_write_bytes,  sum(cast( td.sdiskio_write_bytes as double)) as sum_sdiskio_write_bytes,  avg(cast( td.sdiskio_busy_time as double)) as avg_sdiskio_busy_time,  sum(cast( td.sdiskio_busy_time as double)) as sum_sdiskio_busy_time,  avg(cast( td.sswap_total as double)) as avg_sswap_total,  sum(cast( td.sswap_total as double)) as sum_sswap_total from  data_transformation dt left join telemetry t on  (t.data_transformation_execution_id = dt.id) left join dataflow d on  (dt.df_id = d.id) left join telemetry_cpu tc on  (t.id = tc.telemetry_id) left join telemetry_disk td on  (t.id = td.telemetry_id ) left join telemetry_memory tm on  (t.id = tm.telemetry_id) where  t.data_transformation_execution_id is not null group by  t.data_transformation_execution_id,  dt.tag order by  2 desc",
     "select  uniao.qtd,  uniao.model,  uniao.program from  (  select   mrb.*  from   (   select    count(*) qtd,    domrb.model,    'mrb' program   from    ds_omodelgeneratormodule_mrb domrb   group by    domrb.model) mrb union  select   raxml.*  from   (   select    count(*) qtd,    doraxml.model,    'raxml' program   from    ds_omodelgeneratormodule_raxml doraxml   group by    doraxml.model) raxml) uniao order by 1 desc"
 ]
-
-t = monetdbConn.recupera_tempo(consultas_monet[0])
-
-conteudo = []
 
 for i in range(0, 3):
     novo_item = {}
@@ -52,14 +53,12 @@ for i in range(0, 3):
         texto = "ERRO"
 
     novo_item["consulta"] = texto
-    novo_item["postgres"] = str(
-        pgsqlConn.recupera_tempo(consultas_postgres[i]))
+    novo_item["postgres"] = pgsqlConn.recupera_tempo(
+        consultas_postgres[i]).microseconds
     novo_item["mongo"] = None
-    novo_item["monet"] = str(monetdbConn.recupera_tempo(consultas_monet[i]))
+    novo_item["monet"] = monetdbConn.recupera_tempo(
+        consultas_monet[i]).microseconds
     novo_item["neo4j"] = None
+    novo_item["created_at"] = datetime.now()
 
-    conteudo.append(novo_item)
-
-f = open("./reports/" + datetime.today().strftime('%Y-%m-%d-%H:%M:%S') + ".json", "a")
-f.write(json.dumps(conteudo))
-f.close()
+    mongoConn.insere("reports", [novo_item])
