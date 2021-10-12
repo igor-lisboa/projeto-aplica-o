@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from pymongo.database import Database
+import datetime
 
 
 class MongoRepository(object):
@@ -20,3 +21,10 @@ class MongoRepository(object):
 
     def criar_indice(self, collection: str, indice: str):
         return self.recuperar_collection(collection).create_index(indice)
+
+    def recupera_tempo(self, collection: str, consulta: object):
+        init_time = datetime.datetime.now()
+        self.consultar(collection, consulta)
+        end_time = datetime.datetime.now()
+
+        return end_time - init_time

@@ -1,3 +1,4 @@
 pymonetdb==1.4.1
 psycopg2-binary==2.9.1
 pymongo===3.12.0
+neo4j==4.3.6

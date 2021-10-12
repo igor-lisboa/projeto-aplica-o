@@ -24,9 +24,8 @@ class PostgresRepository(object):
         return rs
 
     def recupera_tempo(self, sql: str, bind: list = []):
-        cur = self._db.cursor()
         init_time = datetime.datetime.now()
-        cur.execute(sql, bind)
+        self.consultar(sql, bind)
         end_time = datetime.datetime.now()
 
         return end_time - init_time
