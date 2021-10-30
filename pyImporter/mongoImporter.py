@@ -32,38 +32,57 @@ importDictionary["dataflow"] = dataflow
 importDictionary["data_transformation"] = data_transformation
 
 
-def insere_documentos(dictionary: dict, nivel: int = 0):
+def insere_documentos(dictionary: dict, nivel: int = 0, dict_father: list = None, chave_insrt: str = None):
     chaves = dictionary.keys()
 
+    result = []
+
     if 'consulta' in dictionary:
-        result = get_dict_by_consulta(dictionary['consulta'])
+        result = get_dict_by_consulta(
+            dictionary['consulta'], dict_father, chave_insrt)
 
     for chave in chaves:
         if(nivel == 0):
             mongoConn.insere(chave, insere_documentos(
                 dictionary[chave], nivel+1))
+            continue
 
         if chave != 'consulta':
-            if(type(dictionary[chave]) == str):
-
-                consulta = str(dictionary[chave])
-                variaveis = re.findall(r'#$.*$#', consulta)
-
-                for variavel in variaveis:
-                    consulta = consulta.replace(
-                        '#$'+variavel+'$#', result[variavel])
-
-                result[chave] = get_dict_by_consulta(dictionary[chave])
-            else:
-                result[chave] = insere_documentos(dictionary[chave], nivel+1)
+            result = insere_documentos(
+                dictionary[chave], nivel+1, result, chave)
 
     return result
 
 
-def get_dict_by_consulta(consulta: str):
-    limit = ' LIMIT ' + str(qtdPerPage) + ' '
+def get_dict_by_consulta(consulta_base: str, dict_father: list = None, chave_insrt: str = None):
+    variaveis = []
 
+    if dict_father != None:
+        variaveis = re.findall(r'\#\$(.*?)\$\#', consulta_base)
+
+        retorno = []
+
+        for item_from_dict_father in dict_father:
+            nova_consulta = ""
+
+            for variavel in variaveis:
+                nova_consulta = consulta_base.replace(
+                    '#$'+variavel+'$#', str(item_from_dict_father[variavel]))
+
+            item_from_dict_father[chave_insrt] = get_result_consulta(
+                nova_consulta)
+
+            retorno += item_from_dict_father
+
+        return retorno
+    else:
+        return get_result_consulta(consulta_base)
+
+
+def get_result_consulta(consulta: str):
     retorno = []
+
+    limit = ' LIMIT ' + str(qtdPerPage) + ' '
 
     pagina = 1
 
@@ -87,7 +106,7 @@ def get_dict_by_consulta(consulta: str):
 
         pagina += 1
 
-        retorno.append(dict_to_insert)
+        retorno += dict_to_insert
 
     return retorno
 
