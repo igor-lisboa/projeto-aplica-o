@@ -2,7 +2,7 @@ from data.mongoRepository import MongoRepository
 from data.monetRepository import MonetRepository
 import re
 
-rodando_no_docker = True
+rodando_no_docker = False
 qtdPerPage = 5
 verbose_level = 2
 
@@ -23,13 +23,13 @@ importDictionary = {}
 dataflow = {}
 dataflow["consulta"] = "select d.id, d.tag from dataflow d order by d.id"
 dataflow_execution = {}
-dataflow_execution["consulta"] = "select sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime from dataflow_execution de where de.df_id = #$id$#  order by   de.execution_datetime"
+dataflow_execution["consulta"] = "select de.id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$#"
 dataflow_execution["tipo"] = "primeiro_ou_nulo"
 dataflow["execution"] = dataflow_execution
 data_transformation = {}
-data_transformation["consulta"] = "select dt.id, dt.tag as data_transformation_tag from data_transformation dt"
+data_transformation["consulta"] = "select dt.id,dt.df_id,dt.tag from data_transformation dt"
 data_transformation_execution = {}
-data_transformation_execution["consulta"] = "select dte.id, dte.dataflow_execution_id, dte.data_transformation_id, sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as current_execution_datetime, LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over ( order by dte.execution_datetime, dte.id) as next_execution_datetime from data_transformation_execution dte where dte.id = #$id$#"
+data_transformation_execution["consulta"] = "select dte.id,dte.dataflow_execution_id,dte.data_transformation_id,sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over ( 	order by dte.execution_datetime,dte.id) as execution_datetime_end from data_transformation_execution dte where dte.data_transformation_id= #$id$#"
 data_transformation["execution"] = data_transformation_execution
 importDictionary["dataflow"] = dataflow
 importDictionary["data_transformation"] = data_transformation
@@ -104,8 +104,10 @@ def get_result_consulta(consulta: str):
 
     pagina = 1
 
+    ultima_pagina = 1
+
     ultima_pagina = int(monetdbConn.consultar(
-        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')[0][0])
+        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') AS x')[0][0])
 
     if ultima_pagina < 1:
         ultima_pagina = 1
@@ -120,7 +122,7 @@ def get_result_consulta(consulta: str):
             offset = ' OFFSET ' + str((pagina-1) * qtdPerPage) + ' '
 
         dict_to_insert = tuple_list_to_dictionary(
-            consulta+limit+offset)
+            'SELECT * FROM (' + consulta + ') x '+limit+offset)
 
         pagina += 1
 
