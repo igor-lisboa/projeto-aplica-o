@@ -32,6 +32,13 @@ data_transformation_execution = {}
 data_transformation_execution["consulta"] = "select dte.id,dte.dataflow_execution_id,dte.data_transformation_id,sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over ( 	order by dte.execution_datetime,dte.id) as execution_datetime_end from data_transformation_execution dte where dte.data_transformation_id= #$id$#"
 data_transformation_execution["tipo"] = "todos_sem_paginacao"
 data_transformation["execution"] = data_transformation_execution
+data_transformation_telemetry = {}
+data_transformation_telemetry["consulta"] = "select  t.data_transformation_execution_id,  tm.svmem_total,  tm.svmem_total,  tm.svmem_available,  tm.svmem_available,  tm.svmem_used,  tm.svmem_used,  cast( tc.scputimes_user as double) as scputimes_user,  cast( tc.scputimes_system as double) as scputimes_system,  cast( tc.scputimes_idle as double) as scputimes_idle,  cast( tc.scputimes_steal as double) as scputimes_steal,  cast( td.sdiskio_read_bytes as double) as sdiskio_read_bytes,  cast( td.sdiskio_write_bytes as double) as sdiskio_write_bytes,  cast( td.sdiskio_busy_time as double) as sdiskio_busy_time,  cast( td.sswap_total as double) as sswap_total from  telemetry t left join telemetry_cpu tc on  (t.id = tc.telemetry_id) left join telemetry_disk td on  (t.id = td.telemetry_id ) left join telemetry_memory tm on  (t.id = tm.telemetry_id) where t.data_transformation_execution_id = #$id$#"
+data_transformation_telemetry["tipo"] = "todos_sem_paginacao"
+data_transformation["telemetry"] = data_transformation_telemetry
+evolutive_models = {}
+evolutive_models["consulta"] = "select  x.program,x.model,x.model_file from  (  select   domrb.model ,   domrb.model_file,   'mrb' program  from   ds_omodelgeneratormodule_mrb domrb union  select    doraxml.model,    doraxml.model_file,    'raxml' program  from    ds_omodelgeneratormodule_raxml doraxml) x"
+importDictionary["evolutive_models"] = evolutive_models
 importDictionary["dataflow"] = dataflow
 importDictionary["data_transformation"] = data_transformation
 
