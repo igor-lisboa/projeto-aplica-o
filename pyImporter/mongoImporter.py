@@ -2,7 +2,7 @@ from data.mongoRepository import MongoRepository
 from data.monetRepository import MonetRepository
 import re
 
-rodando_no_docker = False
+rodando_no_docker = True
 qtdPerPage = 5
 verbose_level = 2
 
@@ -23,13 +23,14 @@ importDictionary = {}
 dataflow = {}
 dataflow["consulta"] = "select d.id, d.tag from dataflow d order by d.id"
 dataflow_execution = {}
-dataflow_execution["consulta"] = "select de.id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$#"
-dataflow_execution["tipo"] = "primeiro_ou_nulo"
+dataflow_execution["consulta"] = "select de.id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$# order by de.df_id limit 1"
+dataflow_execution["tipo"] = "primeiro_ou_nulo_sem_paginacao"
 dataflow["execution"] = dataflow_execution
 data_transformation = {}
 data_transformation["consulta"] = "select dt.id,dt.df_id,dt.tag from data_transformation dt"
 data_transformation_execution = {}
 data_transformation_execution["consulta"] = "select dte.id,dte.dataflow_execution_id,dte.data_transformation_id,sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over ( 	order by dte.execution_datetime,dte.id) as execution_datetime_end from data_transformation_execution dte where dte.data_transformation_id= #$id$#"
+data_transformation_execution["tipo"] = "todos_sem_paginacao"
 data_transformation["execution"] = data_transformation_execution
 importDictionary["dataflow"] = dataflow
 importDictionary["data_transformation"] = data_transformation
@@ -62,7 +63,7 @@ def insere_documentos(dictionary: dict, nivel: int = 0, dict_father: list = None
     return result
 
 
-def get_dict_by_consulta(consulta_base: str, dict_father: list = None, chave_insrt: str = None, tipo_append: str = "todos"):
+def get_dict_by_consulta(consulta_base: str, dict_father: list = None, chave_insrt: str = None, tipo_append: str = "todos_paginado"):
     variaveis = []
 
     if dict_father != None:
@@ -78,9 +79,9 @@ def get_dict_by_consulta(consulta_base: str, dict_father: list = None, chave_ins
                     '#$'+variavel+'$#', str(item_from_dict_father[variavel]))
 
             append_result = get_result_consulta(
-                nova_consulta)
+                nova_consulta, tipo_append)
 
-            if tipo_append == "primeiro_ou_nulo":
+            if tipo_append == "primeiro_ou_nulo" or tipo_append == "primeiro_ou_nulo_sem_paginacao":
                 if len(append_result) > 0:
                     append_result = append_result[0]
                 else:
@@ -94,10 +95,15 @@ def get_dict_by_consulta(consulta_base: str, dict_father: list = None, chave_ins
 
         return retorno
     else:
-        return get_result_consulta(consulta_base)
+        return get_result_consulta(consulta_base, tipo_append)
 
 
-def get_result_consulta(consulta: str):
+def get_result_consulta(consulta: str, tipo_leitura_consulta: str):
+    if(tipo_leitura_consulta == "primeiro_ou_nulo_sem_paginacao" or tipo_leitura_consulta == "todos_sem_paginacao"):
+        if verbose_level > 0:
+            print('consultando sem paginação: ' + consulta + '\n')
+        return tuple_list_to_dictionary(consulta)
+
     retorno = []
 
     limit = ' LIMIT ' + str(qtdPerPage) + ' '
