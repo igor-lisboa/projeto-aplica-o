@@ -13,6 +13,9 @@ class MongoRepository(object):
     def recuperar_collection(self, collection: str):
         return self._db.get_collection(collection)
 
+    def recuperar_db(self):
+        return self._db
+
     def insere(self, collection: str, itens: list = []):
         self.recuperar_collection(collection).insert_many(itens)
 

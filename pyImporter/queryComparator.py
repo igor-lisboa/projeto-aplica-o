@@ -42,6 +42,20 @@ for i in range(0, 3):
 
     texto = ""
     if(i == 0):
+        mongodb = mongoConn.recuperar_db()
+        novo_item["mongo"] = mongodb.get_collection("dataflow").aggregate([
+            {"$project": {
+                "_id": 0,
+                "id": "$id",
+                "next_execution_datetime": "$execution.execution_datetime_end",
+                "execution_dattime": "$execution.execution_datetime_start",
+                "execution_time": {"$divide": [{"$subtract": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]}, 1000]}
+            }, "$sort":{
+                "execution_time": 1,
+                "id": 1
+            }}
+        ])
+
         texto = "consulta de tempos de execucao para cada execucao realizada"
     elif(i == 1):
         texto = "consulta de duracao de execucao por transformacao"
@@ -55,7 +69,6 @@ for i in range(0, 3):
     novo_item["consulta"] = texto
     novo_item["postgres"] = pgsqlConn.recupera_tempo(
         consultas_postgres[i]).microseconds
-    novo_item["mongo"] = None
     novo_item["monet"] = monetdbConn.recupera_tempo(
         consultas_monet[i]).microseconds
     novo_item["neo4j"] = None
