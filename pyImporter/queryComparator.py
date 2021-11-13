@@ -37,25 +37,32 @@ consultas_monet = [
     "select  uniao.qtd,  uniao.model,  uniao.program from  (  select   mrb.*  from   (   select    count(*) qtd,    domrb.model,    'mrb' program   from    ds_omodelgeneratormodule_mrb domrb   group by    domrb.model) mrb union  select   raxml.*  from   (   select    count(*) qtd,    doraxml.model,    'raxml' program   from    ds_omodelgeneratormodule_raxml doraxml   group by    doraxml.model) raxml) uniao order by 1 desc"
 ]
 
+mongo_pipes = [
+    {
+        "pipe": [
+            {"$project": {
+                "_id": 0,
+                "id": "$id",
+                "next_execution_datetime": {
+                    "$ifNull": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]
+                },
+                "execution_dattime": {
+                    "$ifNull": ["$execution.execution_datetime_start", "$execution.execution_datetime_end"]
+                },
+                "execution_time": {"$divide": [{"$subtract": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]}, 1000]}
+            }}, {"$sort": {
+                "execution_time": 1,
+                "id": 1
+            }}],
+        "collection": "dataflow"
+    }
+]
+
 for i in range(0, 3):
     novo_item = {}
 
     texto = ""
     if(i == 0):
-        mongodb = mongoConn.recuperar_db()
-        novo_item["mongo"] = mongodb.get_collection("dataflow").aggregate([
-            {"$project": {
-                "_id": 0,
-                "id": "$id",
-                "next_execution_datetime": "$execution.execution_datetime_end",
-                "execution_dattime": "$execution.execution_datetime_start",
-                "execution_time": {"$divide": [{"$subtract": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]}, 1000]}
-            }, "$sort":{
-                "execution_time": 1,
-                "id": 1
-            }}
-        ])
-
         texto = "consulta de tempos de execucao para cada execucao realizada"
     elif(i == 1):
         texto = "consulta de duracao de execucao por transformacao"
@@ -67,6 +74,8 @@ for i in range(0, 3):
         texto = "ERRO"
 
     novo_item["consulta"] = texto
+    novo_item["mongo"] = mongoConn.recupera_tempo(
+        mongo_pipes[i]["collection"], mongo_pipes[i]["pipe"]).microseconds
     novo_item["postgres"] = pgsqlConn.recupera_tempo(
         consultas_postgres[i]).microseconds
     novo_item["monet"] = monetdbConn.recupera_tempo(

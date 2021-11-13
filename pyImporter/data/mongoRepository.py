@@ -19,13 +19,16 @@ class MongoRepository(object):
     def insere(self, collection: str, itens: list = []):
         self.recuperar_collection(collection).insert_many(itens)
 
-    def consultar(self, collection: str, consulta: object):
+    def achar(self, collection: str, consulta: object):
         return self.recuperar_collection(collection).find(consulta)
+
+    def consultar(self, collection: str, consulta: list):
+        return self.recuperar_collection(collection).aggregate(consulta)
 
     def criar_indice(self, collection: str, indice: str):
         return self.recuperar_collection(collection).create_index(indice)
 
-    def recupera_tempo(self, collection: str, consulta: object):
+    def recupera_tempo(self, collection: str, consulta: list):
         init_time = datetime.datetime.now()
         self.consultar(collection, consulta)
         end_time = datetime.datetime.now()
