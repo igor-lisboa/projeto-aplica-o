@@ -29,7 +29,7 @@ dataflow["execution"] = dataflow_execution
 data_transformation = {}
 data_transformation["consulta"] = "select dt.id,dt.df_id,dt.tag from data_transformation dt"
 data_transformation_execution = {}
-data_transformation_execution["consulta"] = "select dte.id,dte.dataflow_execution_id,dte.data_transformation_id,sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over ( 	order by dte.execution_datetime,dte.id) as execution_datetime_end from data_transformation_execution dte where dte.data_transformation_id= #$id$#"
+data_transformation_execution["consulta"] = "select   dte.id,   dte.dataflow_execution_id,   dte.data_transformation_id,   sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,   LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   dte.execution_datetime,   dte.id) as execution_datetime_end  from   data_transformation_execution dte  left join data_transformation dt on   (dt.id = dte.data_transformation_id)   where dte.data_transformation_id= #$id$#"
 data_transformation_execution["tipo"] = "todos_sem_paginacao"
 data_transformation["execution"] = data_transformation_execution
 data_transformation_telemetry = {}

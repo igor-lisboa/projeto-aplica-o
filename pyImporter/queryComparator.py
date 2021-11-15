@@ -50,7 +50,8 @@ mongo_pipes = [
                     "$ifNull": ["$execution.execution_datetime_start", "$execution.execution_datetime_end"]
                 },
                 "execution_time": {"$divide": [{"$subtract": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]}, 1000]}
-            }}, {"$sort": {
+            }},
+            {"$sort": {
                 "execution_time": 1,
                 "id": 1
             }}],
