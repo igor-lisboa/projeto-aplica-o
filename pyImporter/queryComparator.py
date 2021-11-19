@@ -56,6 +56,28 @@ mongo_pipes = [
                 "id": 1
             }}],
         "collection": "dataflow"
+    },
+    {
+        "pipe": [
+            {"$unwind": {
+                "path": "$execution",
+                "preserveNullAndEmptyArrays": True
+            }},
+            {"$project": {
+                "data_transformation_id": "$id",
+                "data_transformation_tag": "$tag",
+                "execution_time_indv": {"$ifNull": [{"$divide": [{"$subtract": [{"$toDate": {"$ifNull": ["$execution.execution_datetime_end", "$execution.execution_datetime_start"]}}, {"$toDate": {"$ifNull": ["$execution.execution_datetime_start", "$execution.execution_datetime_end"]}}]}, 1000]}, 0]}
+            }},
+            {"$group": {
+                "_id": "$data_transformation_id",
+                "data_transformation_id": {"$first": "$data_transformation_id"},
+                "data_transformation_tag": {"$first": "$data_transformation_tag"},
+                "execution_times": {"$sum": "$execution_time_indv"}
+            }},
+            {"$sort": {
+                "_id": 1
+            }}],
+        "collection": "data_transformation"
     }
 ]
 
