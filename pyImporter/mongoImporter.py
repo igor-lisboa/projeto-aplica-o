@@ -23,7 +23,7 @@ importDictionary = {}
 dataflow = {}
 dataflow["consulta"] = "select d.id, d.tag from dataflow d order by d.id"
 dataflow_execution = {}
-dataflow_execution["consulta"] = "select de.id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$# order by de.df_id limit 1"
+dataflow_execution["consulta"] = "select de.id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, coalesce(LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id),sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S')) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$# order by de.df_id limit 1"
 dataflow_execution["tipo"] = "primeiro_ou_nulo_sem_paginacao"
 dataflow["execution"] = dataflow_execution
 data_transformation = {}
@@ -120,7 +120,7 @@ def get_result_consulta(consulta: str, tipo_leitura_consulta: str):
     ultima_pagina = 1
 
     ultima_pagina = int(monetdbConn.consultar(
-        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') AS x')[0][0])
+        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') AS x')[0][0]) + 1
 
     if ultima_pagina < 1:
         ultima_pagina = 1
