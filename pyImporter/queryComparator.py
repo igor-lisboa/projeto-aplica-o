@@ -78,6 +78,79 @@ mongo_pipes = [
                 "_id": 1
             }}],
         "collection": "data_transformation"
+    },
+    {
+        "pipe": [
+            {"$unwind": {
+                "path": "$telemetry"
+            }},
+            {"$project": {
+                "data_transformation_execution_id": "$id",
+                "tag": "$tag",
+                "svmem_total": {"$toDouble": "$telemetry.svmem_total"},
+                "svmem_available": {"$toDouble": "$telemetry.svmem_available"},
+                "svmem_used": {"$toDouble": "$telemetry.svmem_used"},
+                "scputimes_user": "$telemetry.scputimes_user",
+                "scputimes_system": "$telemetry.scputimes_system",
+                "scputimes_idle": "$telemetry.scputimes_idle",
+                "scputimes_steal": "$telemetry.scputimes_steal",
+                "sdiskio_read_bytes": "$telemetry.sdiskio_read_bytes",
+                "sdiskio_write_bytes": "$telemetry.sdiskio_write_bytes",
+                "sdiskio_busy_time": "$telemetry.sdiskio_busy_time",
+                "sswap_total": "$telemetry.sswap_total"
+            }},
+            {"$group": {
+                "_id": "$data_transformation_execution_id",
+                "tag": {"$first": "$tag"},
+                "count_data_transformation_exec": {"$sum": 1},
+                "avg_svmem_total": {"$avg": "$svmem_total"},
+                "sum_svmem_total": {"$sum": "$svmem_total"},
+                "avg_svmem_available": {"$avg": "$svmem_available"},
+                "sum_svmem_available": {"$sum": "$svmem_available"},
+                "avg_svmem_used": {"$avg": "$svmem_used"},
+                "sum_svmem_used": {"$sum": "$svmem_used"},
+                "avg_scputimes_user": {"$avg": "$scputimes_user"},
+                "sum_scputimes_user": {"$sum": "$scputimes_user"},
+                "avg_scputimes_system": {"$avg": "$scputimes_system"},
+                "sum_scputimes_system": {"$sum": "$scputimes_system"},
+                "avg_scputimes_idle": {"$avg": "$scputimes_idle"},
+                "sum_scputimes_idle": {"$sum": "$scputimes_idle"},
+                "avg_scputimes_steal": {"$avg": "$scputimes_steal"},
+                "sum_scputimes_steal": {"$sum": "$scputimes_steal"},
+                "avg_sdiskio_read_bytes": {"$avg": "$sdiskio_read_bytes"},
+                "sum_sdiskio_read_bytes": {"$sum": "$sdiskio_read_bytes"},
+                "avg_sdiskio_write_bytes": {"$avg": "$sdiskio_write_bytes"},
+                "sum_sdiskio_write_bytes": {"$sum": "$sdiskio_write_bytes"},
+                "avg_sdiskio_busy_time": {"$avg": "$sdiskio_busy_time"},
+                "sum_sdiskio_busy_time": {"$sum": "$sdiskio_busy_time"},
+                "avg_sswap_total": {"$avg": "$sswap_total"},
+                "sum_sswap_total": {"$sum": "$sswap_total"}
+            }},
+            {"$sort": {
+                "tag": -1
+            }}
+        ],
+        "collection": "data_transformation"
+    },
+    {
+        "pipe": [
+            {"$group": {
+                "_id": {
+                    "model": "$model",
+                    "program": "$program"
+                },
+                "qtd": {"$sum": 1}
+            }},
+            {"$project": {
+                "_id": 0,
+                "qtd": "$qtd",
+                "model": "$_id.model",
+                "program": "$_id.program"
+            }},
+            {"$sort": {
+                "qtd": -1
+            }}],
+        "collection": "evolutive_models"
     }
 ]
 
