@@ -3,7 +3,7 @@ from data.postgresRepository import PostgresRepository
 from data.monetRepository import MonetRepository
 from data.mongoRepository import MongoRepository
 
-rodando_no_docker = False
+rodando_no_docker = True
 
 host_mongo = "localhost"
 host_postgres = "localhost"
@@ -154,7 +154,7 @@ mongo_pipes = [
     }
 ]
 
-for i in range(0, 3):
+for i in range(0, 4):
     novo_item = {}
 
     texto = ""
