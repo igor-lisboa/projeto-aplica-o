@@ -168,6 +168,7 @@ def tuple_list_to_dictionary(consulta: str):
 def insert_neo4j_from_dataDictionary(data_dictionary: dict):
     for chave in data_dictionary.keys():
         if(chave[0].isupper()):
+            # https://neo4j.com/docs/cypher-manual/current/clauses/create/#create-create-a-full-path
             print("uhu")
 
 
