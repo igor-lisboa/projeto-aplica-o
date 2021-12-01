@@ -198,8 +198,8 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
             child_key = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
             label = re.findall(r'\[\&(.*?)\&\]', especial_key)[0]
 
-            if isinstance(data_dictionary[key], list):
-                for item in data_dictionary[key]:
+            if isinstance(data_dictionary[especial_key], list):
+                for item in data_dictionary[especial_key]:
                     insert_neo4j_from_dataDictionary(
                         item, level+1, label, dict_to_make_node, relationship, father_key, child_key, node_label)
             else:
