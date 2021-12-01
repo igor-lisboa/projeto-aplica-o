@@ -19,6 +19,9 @@ bash start.sh
 	* port: 7687
 	* username: neo4j
 	* password: neo4j
+### O neo4j libera na porta 7474 uma interface grafica
+* Basta acessar http://localhost:7474
+	* Informe as credenciais e veja os nodes construidos
 ## Tratar postgres
 * Estou usando o dbeaver para fazer conexão com o banco postgres...
 	* host: localhost
