@@ -18,10 +18,13 @@ services:
     ports:
       - 27017:27017
   neo4jdb:
-    image: neo4j:4.1
+    image: neo4j:4.0
     container_name: projeto_aplicacao_neo4j
     restart: always
+    environment:
+      - NEO4J_AUTH=neo4j/senha_neo4j
     ports:
+      - 7474:7474
       - 7687:7687
   postgresdb:
     image: postgres:13.3

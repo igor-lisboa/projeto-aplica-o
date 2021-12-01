@@ -13,7 +13,7 @@ if rodando_no_docker:
     host_monetdb = "projeto_aplicacao_monetdb"
 
 neo4jConn = Neo4jRepository(uri="neo4j:bolt://" + host_neo4j + ":7687/",
-                            user="neo4j", password="neo4j")
+                            user="neo4j", password="senha_neo4j")
 
 monetdbConn = MonetRepository(
     host_monetdb, "sciphy_dados", "monetdb", "monetdb")
@@ -165,26 +165,39 @@ def tuple_list_to_dictionary(consulta: str):
     return retorno
 
 
-def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, father_node_label: str = None, father_node: dict = None):
+def insert_neo4j_from_dataDictionary(data_dictionary: object, level: int = 0, father_node_label: str = None, father_node: dict = None, relationship_label: str = None, father_key_comp: str = None, child_key_comp: str = None, label_relationship: str = None):
     relationship_keys = []
     dict_to_make_node = {}
+
+    if not isinstance(data_dictionary, dict):
+        for item in data_dictionary:
+            insert_neo4j_from_dataDictionary(
+                item, level+1, father_node_label, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship)
+        return
 
     for key in data_dictionary.keys():
         if(level == 0):
             insert_neo4j_from_dataDictionary(
                 data_dictionary[key], level+1, key)
+            break
         else:
             if(key[0] != '['):
                 dict_to_make_node[key] = data_dictionary[key]
             else:
                 relationship_keys.append(key)
-    
-    for especial_key  in relationship_keys:
+
+    neo4jConn.manipular("CREATE (n:" + father_node_label + " $props)", {
+        'props': dict_to_make_node})
+
+    for especial_key in relationship_keys:
         # [:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]
         relationship = re.findall(r'\[\:(.*?)\:\]', especial_key)[0]
         father_key = re.findall(r'\[\#(.*?)\#\]', especial_key)[0]
         child_key = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
         label = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
+
+        insert_neo4j_from_dataDictionary(
+            data_dictionary[especial_key], level+1, father_node_label, dict_to_make_node, relationship, father_key, child_key, label)
 
 
 fill_dataDictionary(importDictionary)
