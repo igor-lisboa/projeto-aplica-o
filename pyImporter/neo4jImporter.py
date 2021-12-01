@@ -25,13 +25,13 @@ dataflow["consulta"] = "select d.id, d.tag from dataflow d order by d.id"
 dataflow_execution = {}
 dataflow_execution["consulta"] = "select de.id, de.df_id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, coalesce(LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id),sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S')) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$# order by de.df_id limit 1"
 dataflow_execution["tipo"] = "primeiro_ou_nulo_sem_paginacao"
-dataflow["[:performed:][#id#][$df_id$][&Execution&]"] = dataflow_execution
+dataflow["[:performed:][#id#][$df_id$][&DataflowExecution&]"] = dataflow_execution
 data_transformation = {}
 data_transformation["consulta"] = "select dt.id,dt.df_id,dt.tag from data_transformation dt"
 data_transformation_execution = {}
 data_transformation_execution["consulta"] = "select  b.id,  b.dataflow_execution_id,  b.data_transformation_id,  b.execution_datetime_start,  b.execution_datetime_end from  (  select   dte.id,   dte.dataflow_execution_id,   dte.data_transformation_id,   sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,   LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   dte.execution_datetime,   dte.id) as execution_datetime_end  from   data_transformation_execution dte  left join data_transformation dt on   (dt.id = dte.data_transformation_id) ) b where  b.data_transformation_id = #$id$#"
 data_transformation_execution["tipo"] = "todos_sem_paginacao"
-data_transformation["[:performed:][#id#][$data_transformation_id$][&Execution&]"] = data_transformation_execution
+data_transformation["[:performed:][#id#][$data_transformation_id$][&DataTransformationExecution&]"] = data_transformation_execution
 data_transformation_telemetry = {}
 data_transformation_telemetry["consulta"] = "select  t.data_transformation_execution_id,  tm.svmem_total,  tm.svmem_total,  tm.svmem_available,  tm.svmem_available,  tm.svmem_used,  tm.svmem_used,  cast( tc.scputimes_user as double) as scputimes_user,  cast( tc.scputimes_system as double) as scputimes_system,  cast( tc.scputimes_idle as double) as scputimes_idle,  cast( tc.scputimes_steal as double) as scputimes_steal,  cast( td.sdiskio_read_bytes as double) as sdiskio_read_bytes,  cast( td.sdiskio_write_bytes as double) as sdiskio_write_bytes,  cast( td.sdiskio_busy_time as double) as sdiskio_busy_time,  cast( td.sswap_total as double) as sswap_total from  telemetry t left join telemetry_cpu tc on  (t.id = tc.telemetry_id) left join telemetry_disk td on  (t.id = td.telemetry_id ) left join telemetry_memory tm on  (t.id = tm.telemetry_id) where t.data_transformation_execution_id = #$id$#"
 data_transformation_telemetry["tipo"] = "todos_sem_paginacao"
@@ -165,39 +165,46 @@ def tuple_list_to_dictionary(consulta: str):
     return retorno
 
 
-def insert_neo4j_from_dataDictionary(data_dictionary: object, level: int = 0, father_node_label: str = None, father_node: dict = None, relationship_label: str = None, father_key_comp: str = None, child_key_comp: str = None, label_relationship: str = None):
+def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node_label: str = None, father_node: dict = None, relationship_label: str = None, father_key_comp: str = None, child_key_comp: str = None, label_relationship_father: str = None):
     relationship_keys = []
     dict_to_make_node = {}
 
-    if not isinstance(data_dictionary, dict):
-        for item in data_dictionary:
-            insert_neo4j_from_dataDictionary(
-                item, level+1, father_node_label, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship)
-        return
-
     for key in data_dictionary.keys():
+        if verbose_level > 0:
+            print('verificando key: ' + str(key) +
+                  ' do dict, com o nivel '+str(level)+' e com node label do pai de '+str(node_label)+'\n')
         if(level == 0):
-            insert_neo4j_from_dataDictionary(
-                data_dictionary[key], level+1, key)
-            break
+            if isinstance(data_dictionary[key], list):
+                for item in data_dictionary[key]:
+                    insert_neo4j_from_dataDictionary(
+                        item, level+1, key, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship_father)
+            else:
+                insert_neo4j_from_dataDictionary(
+                    data_dictionary[key], level+1, key, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship_father)
         else:
             if(key[0] != '['):
                 dict_to_make_node[key] = data_dictionary[key]
             else:
                 relationship_keys.append(key)
 
-    neo4jConn.manipular("CREATE (n:" + father_node_label + " $props)", {
-        'props': dict_to_make_node})
+    if len(dict_to_make_node) > 0:
+        neo4jConn.manipular("CREATE (n:" + node_label + " $props)", {
+            'props': dict_to_make_node})
 
-    for especial_key in relationship_keys:
-        # [:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]
-        relationship = re.findall(r'\[\:(.*?)\:\]', especial_key)[0]
-        father_key = re.findall(r'\[\#(.*?)\#\]', especial_key)[0]
-        child_key = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
-        label = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
+        for especial_key in relationship_keys:
+            # [:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]
+            relationship = re.findall(r'\[\:(.*?)\:\]', especial_key)[0]
+            father_key = re.findall(r'\[\#(.*?)\#\]', especial_key)[0]
+            child_key = re.findall(r'\[\$(.*?)\$\]', especial_key)[0]
+            label = re.findall(r'\[\&(.*?)\&\]', especial_key)[0]
 
-        insert_neo4j_from_dataDictionary(
-            data_dictionary[especial_key], level+1, father_node_label, dict_to_make_node, relationship, father_key, child_key, label)
+            if isinstance(data_dictionary[key], list):
+                for item in data_dictionary[key]:
+                    insert_neo4j_from_dataDictionary(
+                        item, level+1, label, dict_to_make_node, relationship, father_key, child_key, node_label)
+            else:
+                insert_neo4j_from_dataDictionary(
+                    data_dictionary[especial_key], level+1, label, dict_to_make_node, relationship, father_key, child_key, node_label)
 
 
 fill_dataDictionary(importDictionary)
