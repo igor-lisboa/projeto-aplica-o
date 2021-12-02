@@ -25,17 +25,17 @@ dataflow["consulta"] = "select d.id, d.tag from dataflow d order by d.id"
 dataflow_execution = {}
 dataflow_execution["consulta"] = "select de.id, de.df_id, sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start, coalesce(LEAD( sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   de.execution_datetime,   d.id),sys.str_to_timestamp(de.execution_datetime, '%Y-%m-%d %H:%M:%S')) as execution_datetime_end  from   dataflow d  left join dataflow_execution de on   (d.id = de.df_id) where de.df_id >= #$id$# order by de.df_id limit 1"
 dataflow_execution["tipo"] = "primeiro_ou_nulo_sem_paginacao"
-dataflow["[:performed:][#id#][$df_id$][&DataflowExecution&]"] = dataflow_execution
+dataflow["[:PERFORMED:][#id#][$df_id$][&DataflowExecution&]"] = dataflow_execution
 data_transformation = {}
 data_transformation["consulta"] = "select dt.id,dt.df_id,dt.tag from data_transformation dt"
 data_transformation_execution = {}
 data_transformation_execution["consulta"] = "select  b.id,  b.dataflow_execution_id,  b.data_transformation_id,  b.execution_datetime_start,  b.execution_datetime_end from  (  select   dte.id,   dte.dataflow_execution_id,   dte.data_transformation_id,   sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') as execution_datetime_start,   LEAD( sys.str_to_timestamp(dte.execution_datetime, '%Y-%m-%d %H:%M:%S') ) over (  order by   dte.execution_datetime,   dte.id) as execution_datetime_end  from   data_transformation_execution dte  left join data_transformation dt on   (dt.id = dte.data_transformation_id) ) b where  b.data_transformation_id = #$id$#"
 data_transformation_execution["tipo"] = "todos_sem_paginacao"
-data_transformation["[:performed:][#id#][$data_transformation_id$][&DataTransformationExecution&]"] = data_transformation_execution
+data_transformation["[:PERFORMED:][#id#][$data_transformation_id$][&DataTransformationExecution&]"] = data_transformation_execution
 data_transformation_telemetry = {}
 data_transformation_telemetry["consulta"] = "select  t.data_transformation_execution_id,  tm.svmem_total,  tm.svmem_total,  tm.svmem_available,  tm.svmem_available,  tm.svmem_used,  tm.svmem_used,  cast( tc.scputimes_user as double) as scputimes_user,  cast( tc.scputimes_system as double) as scputimes_system,  cast( tc.scputimes_idle as double) as scputimes_idle,  cast( tc.scputimes_steal as double) as scputimes_steal,  cast( td.sdiskio_read_bytes as double) as sdiskio_read_bytes,  cast( td.sdiskio_write_bytes as double) as sdiskio_write_bytes,  cast( td.sdiskio_busy_time as double) as sdiskio_busy_time,  cast( td.sswap_total as double) as sswap_total from  telemetry t left join telemetry_cpu tc on  (t.id = tc.telemetry_id) left join telemetry_disk td on  (t.id = td.telemetry_id ) left join telemetry_memory tm on  (t.id = tm.telemetry_id) where t.data_transformation_execution_id = #$id$#"
 data_transformation_telemetry["tipo"] = "todos_sem_paginacao"
-data_transformation["[:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]"] = data_transformation_telemetry
+data_transformation["[:COLLECTED:][#id#][$data_transformation_execution_id$][&Telemetry&]"] = data_transformation_telemetry
 evolutive_models = {}
 evolutive_models["consulta"] = "select  x.program,x.model,x.model_file from  (  select   domrb.model ,   domrb.model_file,   'mrb' program  from   ds_omodelgeneratormodule_mrb domrb union  select    doraxml.model,    doraxml.model_file,    'raxml' program  from    ds_omodelgeneratormodule_raxml doraxml) x"
 importDictionary["EvolutiveModels"] = evolutive_models
@@ -190,6 +190,10 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
     if len(dict_to_make_node) > 0:
         neo4jConn.manipular("CREATE (n:" + node_label + " $props)", {
             'props': dict_to_make_node})
+
+        if relationship_label != None:
+            neo4jConn.manipular(
+                "MATCH   (a:"+label_relationship_father+"),   (b:"+node_label+")  WHERE a."+father_key_comp+" = b."+child_key_comp+" AND toString(a."+father_key_comp+") = '"+str(father_node[father_key_comp])+"' AND toString(b."+child_key_comp+") = '" + str(dict_to_make_node[child_key_comp]) + "'      CREATE (a)-[r:"+relationship_label+"]->(b)  RETURN type(r)", {})
 
         for especial_key in relationship_keys:
             # [:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]
