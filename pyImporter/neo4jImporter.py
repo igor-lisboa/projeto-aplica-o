@@ -1,6 +1,8 @@
 from data.neo4jRepository import Neo4jRepository
 from data.monetRepository import MonetRepository
 import re
+import json
+from datetime import date
 
 rodando_no_docker = False
 qtdPerPage = 5
@@ -188,12 +190,29 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
                 relationship_keys.append(key)
 
     if len(dict_to_make_node) > 0:
-        neo4jConn.manipular("CREATE (n:" + node_label + " $props)", {
-            'props': dict_to_make_node})
+        command_create_string = "CREATE (n:" + node_label + " $props)"
+        command_create_params = {
+            'props': dict_to_make_node
+        }
+
+        if verbose_level >= 2:
+            print("Preparando pra executar o seguinte comando de CREATE ::::>\n"+json.dumps({
+                'command': command_create_string,
+                'params': command_create_params
+            }, indent=4,
+                sort_keys=True, default=str))
+
+        neo4jConn.manipular(command_create_string, command_create_params)
 
         if relationship_label != None:
-            neo4jConn.manipular(
-                "MATCH   (a:"+label_relationship_father+"),   (b:"+node_label+")  WHERE toString(a."+father_key_comp+") = '"+str(father_node[father_key_comp])+"' AND toString(b."+child_key_comp+") = '" + str(dict_to_make_node[child_key_comp]) + "'      CREATE (a)-[r:"+relationship_label+"]->(b)  RETURN type(r)", {})
+            command_match_string = "MATCH   (a:"+label_relationship_father+"),   (b:"+node_label+")  WHERE toString(a."+father_key_comp+") = '"+str(
+                father_node[father_key_comp])+"' AND toString(b."+child_key_comp+") = '" + str(dict_to_make_node[child_key_comp]) + "'      CREATE (a)-[r:"+relationship_label+"]->(b)  RETURN type(r)"
+
+            if verbose_level >= 2:
+                print("Preparando pra executar o seguinte comando de MATCH ::::>\n" +
+                      command_match_string)
+
+            neo4jConn.manipular(command_match_string, {})
 
         for especial_key in relationship_keys:
             # [:collected:][#id#][$data_transformation_execution_id$][&Telemetry&]
@@ -212,6 +231,13 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
 
 
 fill_dataDictionary(importDictionary)
+
+arq_name = "./neo4jdb/"+date.today().strftime("%Y%m%dT%H:%M:%S") + \
+    "_neo4j_data_dictionary.json"
+print("dataDictionary construido e enviado para o arquivo ::::::> "+arq_name)
+with open(arq_name, "w") as outfile:
+    outfile.write(json.dumps(dataDictionary, indent=4,
+                  sort_keys=True, default=str))
 
 insert_neo4j_from_dataDictionary(dataDictionary)
 
