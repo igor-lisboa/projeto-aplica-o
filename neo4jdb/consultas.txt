@@ -1,0 +1,3 @@
+MATCH (d:Dataflow)-->(e:DataflowExecution)
+RETURN d.id AS id,e.execution_datetime_start AS execution_dattime,e.execution_datetime_end AS next_execution_datetime, duration.inSeconds(e.execution_datetime_start,e.execution_datetime_end).seconds AS execution_time
+ORDER BY execution_time, id

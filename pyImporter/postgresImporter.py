@@ -32,7 +32,7 @@ def percorre_tabelas(consulta: str):
     insert_query_colunas = ""
 
     ultima_pagina = int(monetdbConn.consultar(
-        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')[0][0])
+        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')[0][0])+1
     if ultima_pagina < 1:
         ultima_pagina = 1
 
