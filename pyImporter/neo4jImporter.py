@@ -232,12 +232,13 @@ def insert_neo4j_from_data_dictionary(data_dictionary: dict, level: int = 0, nod
 
 fill_data_dictionary(importDictionary)
 
-arq_name = "./neo4jdb/"+date.today().strftime("%Y%m%dT%H:%M:%S") + \
-    "_neo4j_data_dictionary.json"
-print("dataDictionary construido e enviado para o arquivo ::::::> "+arq_name)
-with open(arq_name, "w") as outfile:
-    outfile.write(json.dumps(dataDictionary, indent=4,
-                  sort_keys=True, default=str))
+if verbose_level >= 2:
+    arq_name = "./neo4jdb/"+date.today().strftime("%Y%m%dT%H:%M:%S") + \
+        "_neo4j_data_dictionary.json"
+    print("dataDictionary construido e enviado para o arquivo ::::::> "+arq_name)
+    with open(arq_name, "w") as outfile:
+        outfile.write(json.dumps(dataDictionary, indent=4,
+                    sort_keys=True, default=str))
 
 insert_neo4j_from_data_dictionary(dataDictionary)
 
