@@ -13,6 +13,9 @@ sleep 5
 echo "--Importando dados do monetdb pro mongo--"
 docker exec -it projeto_aplicacao_pyimporter bash -c "cd /var/app && rm -R venv -f && rm -R env -f && python3 -m pip install --upgrade pip && python3 -m venv ./venv && source venv/bin/activate && pip install -r requirements.txt && python3 -m mongoImporter"
 sleep 5
+echo "--Importando dados do monetdb pro neo4j--"
+docker exec -it projeto_aplicacao_pyimporter bash -c "cd /var/app && rm -R venv -f && rm -R env -f && python3 -m pip install --upgrade pip && python3 -m venv ./venv && source venv/bin/activate && pip install -r requirements.txt && python3 -m neo4jImporter"
+sleep 5
 # echo "--Comparando consultas--"
 docker exec -it projeto_aplicacao_pyimporter bash -c "cd /var/app && rm -R venv -f && rm -R env -f && python3 -m pip install --upgrade pip && python3 -m venv ./venv && source venv/bin/activate && pip install -r requirements.txt && python3 -m queryComparator"
 sleep 5

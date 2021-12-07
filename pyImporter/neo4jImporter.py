@@ -4,17 +4,17 @@ import re
 import json
 from datetime import date
 
-rodando_no_docker = False
+rodando_no_docker = True
 qtdPerPage = 5
 verbose_level = 2
 
-host_neo4j = "localhost"
+host_neo4j = "neo4j:bolt://localhost"
 host_monetdb = "localhost"
 if rodando_no_docker:
-    host_neo4j = "projeto_aplicacao_neo4j"
+    host_neo4j = "bolt://projeto_aplicacao_neo4j"
     host_monetdb = "projeto_aplicacao_monetdb"
 
-neo4jConn = Neo4jRepository(uri="neo4j:bolt://" + host_neo4j + ":7687/",
+neo4jConn = Neo4jRepository(uri=host_neo4j + ":7687/",
                             user="neo4j", password="senha_neo4j")
 
 monetdbConn = MonetRepository(
@@ -48,7 +48,7 @@ importDictionary["DataTransformation"] = data_transformation
 dataDictionary = {}
 
 
-def fill_dataDictionary(dictionary: dict, nivel: int = 0, dict_father: list = None, chave_insrt: str = None):
+def fill_data_dictionary(dictionary: dict, nivel: int = 0, dict_father: list = None, chave_insrt: str = None):
     chaves = dictionary.keys()
 
     result = []
@@ -63,13 +63,13 @@ def fill_dataDictionary(dictionary: dict, nivel: int = 0, dict_father: list = No
 
     for chave in chaves:
         if(nivel == 0):
-            itns_to_insert = fill_dataDictionary(
+            itns_to_insert = fill_data_dictionary(
                 dictionary[chave], nivel+1)
             dataDictionary[chave] = itns_to_insert
             continue
 
         if chave != 'consulta' and chave != 'tipo':
-            result = fill_dataDictionary(
+            result = fill_data_dictionary(
                 dictionary[chave], nivel+1, result, chave)
 
     return result
@@ -167,7 +167,7 @@ def tuple_list_to_dictionary(consulta: str):
     return retorno
 
 
-def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node_label: str = None, father_node: dict = None, relationship_label: str = None, father_key_comp: str = None, child_key_comp: str = None, label_relationship_father: str = None):
+def insert_neo4j_from_data_dictionary(data_dictionary: dict, level: int = 0, node_label: str = None, father_node: dict = None, relationship_label: str = None, father_key_comp: str = None, child_key_comp: str = None, label_relationship_father: str = None):
     relationship_keys = []
     dict_to_make_node = {}
 
@@ -178,10 +178,10 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
         if(level == 0):
             if isinstance(data_dictionary[key], list):
                 for item in data_dictionary[key]:
-                    insert_neo4j_from_dataDictionary(
+                    insert_neo4j_from_data_dictionary(
                         item, level+1, key, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship_father)
             else:
-                insert_neo4j_from_dataDictionary(
+                insert_neo4j_from_data_dictionary(
                     data_dictionary[key], level+1, key, father_node, relationship_label, father_key_comp, child_key_comp, label_relationship_father)
         else:
             if(key[0] != '['):
@@ -223,14 +223,14 @@ def insert_neo4j_from_dataDictionary(data_dictionary: dict, level: int = 0, node
 
             if isinstance(data_dictionary[especial_key], list):
                 for item in data_dictionary[especial_key]:
-                    insert_neo4j_from_dataDictionary(
+                    insert_neo4j_from_data_dictionary(
                         item, level+1, label, dict_to_make_node, relationship, father_key, child_key, node_label)
             else:
-                insert_neo4j_from_dataDictionary(
+                insert_neo4j_from_data_dictionary(
                     data_dictionary[especial_key], level+1, label, dict_to_make_node, relationship, father_key, child_key, node_label)
 
 
-fill_dataDictionary(importDictionary)
+fill_data_dictionary(importDictionary)
 
 arq_name = "./neo4jdb/"+date.today().strftime("%Y%m%dT%H:%M:%S") + \
     "_neo4j_data_dictionary.json"
@@ -239,7 +239,7 @@ with open(arq_name, "w") as outfile:
     outfile.write(json.dumps(dataDictionary, indent=4,
                   sort_keys=True, default=str))
 
-insert_neo4j_from_dataDictionary(dataDictionary)
+insert_neo4j_from_data_dictionary(dataDictionary)
 
 monetdbConn.fechar()
 # https://neo4j.com/docs/cypher-manual/current/clauses/create/#create-create-a-full-path
