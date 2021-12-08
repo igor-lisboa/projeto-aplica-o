@@ -14,7 +14,7 @@ class Neo4jRepository:
         rs = None
         with self.driver.session() as session:
             resultado = session.run(query, parameters)
-            rs = resultado.single()
+            rs = resultado.data()
         return rs
 
     def recupera_tempo(self, query: str, parameters: object):
