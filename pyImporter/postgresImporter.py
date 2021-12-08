@@ -31,10 +31,15 @@ def percorre_tabelas(consulta: str):
     insert_query = "INSERT INTO " + esquema_postgres + "."+tabela
     insert_query_colunas = ""
 
+    ultima_pagina = 1
+
     ultima_pagina = int(monetdbConn.consultar(
-        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') x')[0][0])+1
+        'SELECT ceil(count(*)/' + str(qtdPerPage) + ') FROM (' + consulta + ') AS x')[0][0]) + 1
+
     if ultima_pagina < 1:
         ultima_pagina = 1
+
+    values_bind_consulta = ""
 
     while(pagina <= ultima_pagina):
         if verbose_level > 0:
@@ -49,8 +54,6 @@ def percorre_tabelas(consulta: str):
 
         if len(resultado) > 0:
 
-            values_bind_consulta = ""
-
             if(pagina == 1):
 
                 for coluna in monetdbConn.recupera_estrutura(consulta+limit+offset):
@@ -62,7 +65,7 @@ def percorre_tabelas(consulta: str):
                     insert_query_colunas += coluna[0]
                     values_bind_consulta += "%s"
 
-                insert_query += "("+insert_query_colunas + \
+                insert_query += " ("+insert_query_colunas + \
                     ") VALUES "
 
                 values_bind_consulta = "("+values_bind_consulta+")"
@@ -84,13 +87,13 @@ def percorre_tabelas(consulta: str):
 
                 values_consulta += values_bind_consulta
 
-            insert_query += values_consulta
+            insert_query_builded = insert_query + values_consulta
 
             if verbose_level > 1:
-                print("Executando a query: " + insert_query +
+                print("Executando a query: " + insert_query_builded +
                       " no POSTGRES, com os valores: " + json.dumps(bind) + "\n\n")
 
-            pgsqlConn.manipular(insert_query, bind)
+            pgsqlConn.manipular(insert_query_builded, bind)
 
         pagina += 1
 
