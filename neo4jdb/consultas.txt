@@ -7,3 +7,7 @@ MATCH (d:DataTransformation)-->(e:DataTransformationExecution)
 RETURN d.id AS id,d.tag AS tag,toInteger(sum(duration.inSeconds(e.execution_datetime_start,e.execution_datetime_end).seconds)) AS execution_time
 ORDER BY d.id
 
+
+MATCH (d:DataTransformation)-->(t:Telemetry)
+RETURN d.id AS id, d.tag AS tag,COUNT(*) AS count_data_transformation_exec,AVG(toFloat(t.svmem_total)) AS avg_svmem_total, SUM(toFloat(t.svmem_total)) AS sum_svmem_total,AVG(toFloat(t.svmem_available)) AS avg_svmem_available, SUM(toFloat(t.svmem_available)) AS sum_svmem_available,AVG(toFloat(t.svmem_used)) AS avg_svmem_used, SUM(toFloat(t.svmem_used)) AS sum_svmem_used,AVG(t.scputimes_user) AS avg_scputimes_user, SUM(t.scputimes_user) AS sum_scputimes_user,AVG(t.scputimes_system) AS avg_scputimes_system, SUM(t.scputimes_system) AS sum_scputimes_system,AVG(t.scputimes_idle) AS avg_scputimes_idle, SUM(t.scputimes_idle) AS sum_scputimes_idle,AVG(t.scputimes_steal) AS avg_scputimes_steal, SUM(t.scputimes_steal) AS sum_scputimes_steal,AVG(t.sdiskio_read_bytes) AS avg_sdiskio_read_bytes, SUM(t.sdiskio_read_bytes) AS sum_sdiskio_read_bytes,AVG(t.sdiskio_write_bytes) AS avg_sdiskio_write_bytes, SUM(t.sdiskio_write_bytes) AS sum_sdiskio_write_bytes,AVG(t.sdiskio_busy_time) AS avg_sdiskio_busy_time, SUM(t.sdiskio_busy_time) AS sum_sdiskio_busy_time,AVG(t.sswap_total) AS avg_sswap_total, SUM(t.sswap_total) AS sum_sswap_total
+ORDER BY d.tag DESC
