@@ -168,30 +168,48 @@ mongo_pipes = [
     }
 ]
 
-for i in range(0, 4):
-    novo_item = {}
+for it in range(0, 10):
+    for i in range(0, 4):
+        novo_item = {}
 
-    texto = ""
-    if(i == 0):
-        texto = "consulta de tempos de execucao para cada execucao realizada"
-    elif(i == 1):
-        texto = "consulta de duracao de execucao por transformacao"
-    elif(i == 2):
-        texto = "Consulta para identificar consumo de recurso por transformacao (relacionando telemetry data_transformation_execution_id com data_transformation) e por dataflow"
-    elif(i == 3):
-        texto = "quantitativo de modelos evolutivos calculados"
-    else:
-        texto = "ERRO"
+        texto = ""
+        if(i == 0):
+            texto = "consulta de tempos de execucao para cada execucao realizada"
+        elif(i == 1):
+            texto = "consulta de duracao de execucao por transformacao"
+        elif(i == 2):
+            texto = "Consulta para identificar consumo de recurso por transformacao (relacionando telemetry data_transformation_execution_id com data_transformation) e por dataflow"
+        elif(i == 3):
+            texto = "quantitativo de modelos evolutivos calculados"
+        else:
+            texto = "ERRO"
 
-    novo_item["consulta"] = texto
-    novo_item["mongo"] = mongoConn.recupera_tempo(
-        mongo_pipes[i]["collection"], mongo_pipes[i]["pipe"]).microseconds
-    novo_item["postgres"] = pgsqlConn.recupera_tempo(
-        consultas_postgres[i]).microseconds
-    novo_item["monet"] = monetdbConn.recupera_tempo(
-        consultas_monet[i]).microseconds
-    novo_item["neo4j"] = neo4jConn.recupera_tempo(
-        consultas_neo4j[i], {}).microseconds
-    novo_item["created_at"] = datetime.now()
+        novo_item["consulta"] = texto
+        novo_item["mongo"] = mongoConn.recupera_tempo(
+            mongo_pipes[i]["collection"], mongo_pipes[i]["pipe"]).microseconds
+        novo_item["postgres"] = pgsqlConn.recupera_tempo(
+            consultas_postgres[i]).microseconds
+        novo_item["monet"] = monetdbConn.recupera_tempo(
+            consultas_monet[i]).microseconds
+        novo_item["neo4j"] = neo4jConn.recupera_tempo(
+            consultas_neo4j[i], {}).microseconds
+        novo_item["created_at"] = datetime.now()
 
-    mongoConn.insere("reports", [novo_item])
+        mongoConn.insere("reports", [novo_item])
+
+ret = mongoConn.consultar("reports", [{"$group": {
+    "_id": "$consulta",
+    "mongo": {"$avg": "$mongo"},
+    "postgres": {"$avg": "$postgres"},
+    "monet": {"$avg": "$monet"},
+    "neo4j": {"$avg": "$neo4j"}
+}}])
+
+print("Tempo (ms) médio de demora de cada consulta em cada BD:\n")
+
+for bd_time in ret:
+    print("Consulta: " + str(bd_time["_id"]) +
+          "\nMongo: " + str(bd_time["mongo"]) +
+          "\nPostgres: " + str(bd_time["postgres"]) +
+          "\nMonet: " + str(bd_time["monet"]) +
+          "\nNeo4j: " + str(bd_time["neo4j"]) + "\n\n\n\n")
